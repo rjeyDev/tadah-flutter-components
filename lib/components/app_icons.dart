@@ -8,8 +8,8 @@ class AppIcons {
 
   static const IconData apple =
       IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  // static const IconData arrow_clockwise =
-  //     IconData(0xe801, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData arrow_clockwise =
+      IconData(0xe801, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData arrow_counter_clockwise =
       IconData(0xe802, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData arrow_left =

@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 
 import '../types.dart';
 import 'border_theme_data.dart';
+import 'text_style_theme_data.dart';
 import 'text_theme_data.dart';
 import 'background_theme_data.dart';
 import 'button_theme_data.dart';
@@ -29,6 +30,7 @@ class AppThemeData {
       base: Color.lerp(a.base, b.base, t),
       contrast: Color.lerp(a.contrast, b.contrast, t),
       text: AppTextThemeData.lerp(a.text, b.text, t),
+      textStyles: AppTextStylesThemeData.lerp(a.textStyles, b.textStyles, t),
       background: AppBackgroundThemeData.lerp(a.background, b.background, t),
       border: AppBorderThemeData.lerp(a.border, b.border, t),
       button: AppButtonThemeData.lerp(a.button, b.button, t),
@@ -44,6 +46,7 @@ class AppThemeData {
     @required this.base,
     @required this.contrast,
     @required this.text,
+    @required this.textStyles,
     @required this.background,
     @required this.border,
     @required this.button,
@@ -57,6 +60,7 @@ class AppThemeData {
   final Color base;
   final Color contrast;
   final AppTextThemeData text;
+  final AppTextStylesThemeData textStyles;
   final AppBackgroundThemeData background;
   final AppBorderThemeData border;
   final AppButtonThemeData button;

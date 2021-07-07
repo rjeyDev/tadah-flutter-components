@@ -1,6 +1,7 @@
 // @dart=2.9
 import 'package:tadah_flutter_components/theme/theme/index.dart';
 import 'package:tadah_flutter_components/theme/theme/src/theme_data/border_theme_data.dart';
+import 'package:tadah_flutter_components/theme/theme/src/theme_data/text_style_theme_data.dart';
 
 import '../app_colors.dart';
 
@@ -17,6 +18,20 @@ const AppThemeData themeDarkCommon = const AppThemeData(
     placeholder: AppColors.TEXT_SECONDARY_DARK,
     disabled: AppColors.TEXT_DISABLED_DARK,
     onAccent: AppColors.WHITE,
+  ),
+  textStyles: AppTextStylesThemeData(
+    h1: AppTextStyles.H1,
+    h2: AppTextStyles.H2,
+    h3: AppTextStyles.H3,
+    h4: AppTextStyles.H4,
+    h5: AppTextStyles.H5,
+    h6: AppTextStyles.H6,
+    body: AppTextStyles.BODY,
+    bodyMoreText: AppTextStyles.BODY_MORE_TEXT,
+    secondary: AppTextStyles.SECONDARY,
+    secondaryMoreText: AppTextStyles.SECONDARY_MORE_TEXT,
+    note: AppTextStyles.NOTE,
+    noteAccent: AppTextStyles.NOTE_ACCENT,
   ),
   background: AppBackgroundThemeData(
     main: AppColors.BACKGROUND_MAIN_DARK,

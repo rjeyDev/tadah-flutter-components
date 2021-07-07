@@ -1,6 +1,8 @@
 // @dart=2.9
 import 'package:flutter/widgets.dart';
-import 'package:tadah_flutter_components/theme/theme/index.dart';
+
+import 'app_colors.dart';
+import 'theme/src/theme.dart';
 
 class AppTextStyles {
   AppTextStyles._();
@@ -46,6 +48,134 @@ class AppTextStyles {
   static const double noteHeightBasicCalc = noteFontSize * basicLineHeight;
 
   static const double inputHeightBasicCalc = inputFontSize * basicLineHeight;
+
+  static const TextStyle H1 = TextStyle(
+    color: AppColors.TEXT_PRIMARY_LIGHT,
+    fontFamily: mainFontFamily,
+    fontSize: header1FontSize,
+    fontWeight: headerFontWeight,
+    letterSpacing: basicLetterSpacing,
+    decoration: TextDecoration.none,
+    height: basicLineHeight,
+  );
+
+  static const TextStyle H2 = TextStyle(
+    color: AppColors.TEXT_PRIMARY_LIGHT,
+    fontFamily: mainFontFamily,
+    fontSize: header2FontSize,
+    fontWeight: headerFontWeight,
+    letterSpacing: basicLetterSpacing,
+    decoration: TextDecoration.none,
+    height: basicLineHeight,
+  );
+
+  static const TextStyle H3 = TextStyle(
+    color: AppColors.TEXT_PRIMARY_LIGHT,
+    fontFamily: mainFontFamily,
+    fontSize: header3FontSize,
+    fontWeight: headerFontWeight,
+    letterSpacing: basicLetterSpacing,
+    decoration: TextDecoration.none,
+    height: basicLineHeight,
+  );
+
+  static const TextStyle H4 = TextStyle(
+    color: AppColors.TEXT_PRIMARY_LIGHT,
+    fontFamily: mainFontFamily,
+    fontSize: header4FontSize,
+    fontWeight: headerFontWeight,
+    letterSpacing: basicLetterSpacing,
+    decoration: TextDecoration.none,
+    height: basicLineHeight,
+  );
+
+  static const TextStyle H5 = TextStyle(
+    color: AppColors.TEXT_PRIMARY_LIGHT,
+    fontFamily: mainFontFamily,
+    fontSize: header5FontSize,
+    fontWeight: headerFontWeight,
+    letterSpacing: basicLetterSpacing,
+    decoration: TextDecoration.none,
+    height: basicLineHeight,
+  );
+
+  static const TextStyle H6 = TextStyle(
+    color: AppColors.TEXT_PRIMARY_LIGHT,
+    fontFamily: mainFontFamily,
+    fontSize: header6FontSize,
+    fontWeight: headerFontWeightSmall,
+    letterSpacing: basicLetterSpacing,
+    decoration: TextDecoration.none,
+    height: basicLineHeight,
+  );
+
+  static const TextStyle SUBTITLE = TextStyle(
+    color: AppColors.TEXT_PRIMARY_LIGHT,
+    fontFamily: mainFontFamily,
+    fontSize: subtitleFontSize,
+    fontWeight: headerFontWeightSmall,
+    letterSpacing: basicLetterSpacing,
+    decoration: TextDecoration.none,
+    height: basicLineHeight,
+  );
+  static const TextStyle BODY = TextStyle(
+    color: AppColors.TEXT_PRIMARY_LIGHT,
+    fontFamily: mainFontFamily,
+    fontSize: bodyFontSize,
+    fontWeight: basicFontWeight,
+    letterSpacing: basicLetterSpacing,
+    decoration: TextDecoration.none,
+    height: basicLineHeight,
+  );
+  static const TextStyle BODY_MORE_TEXT = TextStyle(
+    color: AppColors.TEXT_PRIMARY_LIGHT,
+    fontFamily: mainFontFamily,
+    fontSize: bodyFontSize,
+    fontWeight: basicFontWeight,
+    letterSpacing: basicLetterSpacing,
+    decoration: TextDecoration.none,
+    height: readingLineHeight,
+  );
+
+  static const TextStyle SECONDARY = TextStyle(
+    color: AppColors.TEXT_PRIMARY_LIGHT,
+    fontFamily: mainFontFamily,
+    fontSize: secondaryFontSize,
+    fontWeight: basicFontWeight,
+    letterSpacing: basicLetterSpacing,
+    decoration: TextDecoration.none,
+    height: basicLineHeight,
+  );
+
+  static const TextStyle SECONDARY_MORE_TEXT = TextStyle(
+    color: AppColors.TEXT_PRIMARY_LIGHT,
+    fontFamily: mainFontFamily,
+    fontSize: secondaryFontSize,
+    fontWeight: basicFontWeight,
+    letterSpacing: basicLetterSpacing,
+    decoration: TextDecoration.none,
+    height: readingLineHeight,
+  );
+
+  static const TextStyle NOTE = TextStyle(
+    color: AppColors.TEXT_PRIMARY_LIGHT,
+    fontFamily: mainFontFamily,
+    fontSize: noteFontSize,
+    fontWeight: basicFontWeight,
+    letterSpacing: basicLetterSpacing,
+    decoration: TextDecoration.none,
+    height: basicLineHeight,
+  );
+
+  static const TextStyle NOTE_ACCENT = TextStyle(
+    color: AppColors.TEXT_PRIMARY_LIGHT,
+    fontFamily: mainFontFamily,
+    fontSize: noteFontSize,
+    fontWeight: headerFontWeightSmall,
+    letterSpacing: basicLetterSpacing,
+    decoration: TextDecoration.none,
+    height: basicLineHeight,
+  );
 
   static TextStyle styleFrom({
     TextStyles style,
