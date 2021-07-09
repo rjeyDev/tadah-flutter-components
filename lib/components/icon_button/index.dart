@@ -11,6 +11,8 @@ class CommonIconButton extends StatefulWidget {
 
   const CommonIconButton(
     this.icon, {
+    this.focusNode,
+    this.autoFocus = false,
     this.onPressed,
     this.type = CommonButtonType.Primary,
     this.size = CommonButtonSize.Medium,
@@ -26,6 +28,8 @@ class CommonIconButton extends StatefulWidget {
         assert(loading != null);
 
   final IconData icon;
+  final FocusNode focusNode;
+  final bool autoFocus;
   final VoidCallback onPressed;
   final CommonButtonType type;
   final CommonButtonSize size;
@@ -44,6 +48,8 @@ class CommonIconButton extends StatefulWidget {
 class _CommonIconButtonState extends State<CommonIconButton> {
   bool get disabled => widget.onPressed == null;
   bool pressed = false;
+  bool focused = false;
+  bool hovered = false;
 
   Color _backgroundColor(BuildContext context) {
     switch (widget.type) {
@@ -157,11 +163,19 @@ class _CommonIconButtonState extends State<CommonIconButton> {
     switch (widget.type) {
       case CommonButtonType.Outlined:
       case CommonButtonType.Contrast:
-        return AppColors.BLUE_VIOLET_500_24;
+        return focused
+            ? AppColors.BLUE_VIOLET_500_16
+            : (hovered || pressed)
+                ? AppColors.BLUE_VIOLET_500_24
+                : AppColors.TRANSPARENT;
         break;
       case CommonButtonType.Primary:
       default:
-        return AppColors.BLACK_24;
+        return focused
+            ? AppColors.BLACK_16
+            : (pressed || hovered)
+                ? AppColors.BLACK_24
+                : AppColors.TRANSPARENT;
     }
   }
 
@@ -188,7 +202,8 @@ class _CommonIconButtonState extends State<CommonIconButton> {
         return Stack(
           children: [
             Positioned.fill(
-              child: Container(
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 50),
                 decoration: BoxDecoration(
                   color: _backgroundColor(context),
                   borderRadius:
@@ -196,78 +211,75 @@ class _CommonIconButtonState extends State<CommonIconButton> {
                 ),
               ),
             ),
+            // overlay
             Positioned.fill(
-              child: AnimatedOpacity(
-                opacity: pressed ? 1 : 0,
+              child: AnimatedContainer(
                 duration: Duration(milliseconds: 100),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: _overlayColor(context),
-                    borderRadius:
-                        BorderRadius.circular(CommonIconButton._borderRadius),
-                  ),
+                decoration: BoxDecoration(
+                  color: _overlayColor(context),
+                  borderRadius:
+                      BorderRadius.circular(CommonIconButton._borderRadius),
                 ),
               ),
             ),
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: widget.loading ? null : widget.onPressed,
-              onTapDown: (details) {
-                if (!disabled & !widget.loading) {
-                  setState(() {
-                    pressed = true;
-                  });
-                }
-              },
-              onTapUp: (details) {
+            Focus(
+              focusNode: widget.focusNode,
+              autofocus: widget.autoFocus,
+              onFocusChange: (value) {
                 setState(() {
-                  pressed = false;
+                  focused = value;
                 });
               },
-              onTapCancel: () {
-                setState(() {
-                  pressed = false;
-                });
-              },
-              child: Container(
-                padding: widget.padding != null
-                    ? widget.padding
-                    : _contentPadding(context),
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  borderRadius:
-                      new BorderRadius.circular(CommonIconButton._borderRadius),
-                  border: Border.fromBorderSide(_border(context)),
-                ),
-                child: Center(
-                  child: widget.loading
-                      ? CommonLoader(
-                          size: _loaderSize(),
-                          inverse: _isLoaderInversed(context),
-                        )
-                      : Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (widget.prefixBuilder != null)
-                              widget.prefixBuilder(
-                                context,
-                                widget.type,
-                                null,
-                                _color(context),
-                              ),
-                            Flexible(
-                              flex: 1,
-                              child: _content(context),
-                            ),
-                            if (widget.suffixBuilder != null)
-                              widget.suffixBuilder(
-                                context,
-                                widget.type,
-                                null,
-                                _color(context),
-                              ),
-                          ],
-                        ),
+              child: GestureDetector(
+                onTap: widget.loading ? null : widget.onPressed,
+                onTapDown: (details) {
+                  if (!disabled & !widget.loading) {
+                    setState(() {
+                      // hovered = true;
+                      pressed = true;
+                      FocusScope.of(context).requestFocus(FocusNode());
+                      // pressed = true;
+                    });
+                  }
+                },
+                onTapUp: (details) {
+                  if (!disabled & !widget.loading) {
+                    setState(() {
+                      // hovered = false;
+                      pressed = false;
+                    });
+                    // Future.delayed(Duration(milliseconds: 100), () {
+                    //   setState(() {
+                    //     pressed = false;
+                    //   });
+                    // });
+                  }
+                },
+                onTapCancel: () {
+                  if (!disabled && !widget.loading)
+                    setState(() {
+                      // hovered = false;
+                      pressed = false;
+                    });
+                },
+                child: Container(
+                  padding: widget.padding != null
+                      ? widget.padding
+                      : _contentPadding(context),
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    borderRadius: new BorderRadius.circular(
+                        CommonIconButton._borderRadius),
+                    border: Border.fromBorderSide(_border(context)),
+                  ),
+                  child: Center(
+                    child: widget.loading
+                        ? CommonLoader(
+                            size: _loaderSize(),
+                            inverse: _isLoaderInversed(context),
+                          )
+                        : _content(context),
+                  ),
                 ),
               ),
             ),

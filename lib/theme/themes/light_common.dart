@@ -40,7 +40,7 @@ const AppThemeData themeLightCommon = const AppThemeData(
   ),
   button: AppButtonThemeData(
     backgroundCommon: AppColors.BUTTON_BACKGROUND_COMMON_LIGHT,
-    backgroundDisabled: AppColors.BUTTON_BACKGROUND_DISABLED_LIGHT,
+    backgroundDisabled: AppColors.BACKGROUND_BUTTON_DISABLED_LIGHT,
     borderDisabled: AppColors.TEXT_DISABLED_LIGHT,
     textOnFilled: AppColors.WHITE,
     textDisabled: AppColors.TEXT_DISABLED_LIGHT,

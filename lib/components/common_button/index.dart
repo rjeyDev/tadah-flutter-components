@@ -37,6 +37,8 @@ class CommonButton extends StatefulWidget {
 
   factory CommonButton.withIcon(
     String text, {
+    FocusNode focusNode,
+    bool autoFocus = false,
     IconData icon,
     IconPosition iconPosition = IconPosition.Left,
     VoidCallback onPressed,
@@ -49,6 +51,8 @@ class CommonButton extends StatefulWidget {
   }) {
     return CommonButton(
       text,
+      focusNode: focusNode,
+      autoFocus: autoFocus,
       onPressed: onPressed,
       type: type,
       size: size,
@@ -87,6 +91,8 @@ class CommonButton extends StatefulWidget {
 
   const CommonButton(
     this.text, {
+    this.focusNode,
+    this.autoFocus = false,
     this.onPressed,
     this.type = CommonButtonType.Primary,
     this.size = CommonButtonSize.Medium,
@@ -102,6 +108,8 @@ class CommonButton extends StatefulWidget {
         assert(loading != null);
 
   final String text;
+  final FocusNode focusNode;
+  final bool autoFocus;
   final VoidCallback onPressed;
   final CommonButtonType type;
   final CommonButtonSize size;
@@ -120,6 +128,8 @@ class CommonButton extends StatefulWidget {
 class _CommonButtonState extends State<CommonButton> {
   bool get disabled => widget.onPressed == null;
   bool pressed = false;
+  bool focused = false;
+  bool hovered = false;
 
   Color _backgroundColor(BuildContext context) {
     switch (widget.type) {
@@ -251,11 +261,21 @@ class _CommonButtonState extends State<CommonButton> {
     switch (widget.type) {
       case CommonButtonType.Outlined:
       case CommonButtonType.Contrast:
-        return AppColors.BLUE_VIOLET_500_24;
+        return focused
+            ? AppColors.BLUE_VIOLET_500_16
+            : (hovered || pressed)
+                ? AppColors.BLUE_VIOLET_500_24
+                : AppColors.TRANSPARENT;
         break;
       case CommonButtonType.Primary:
       default:
-        return AppColors.BLACK_24;
+        return hovered
+            ? AppColors.BLACK_8
+            : focused
+                ? AppColors.BLACK_16
+                : pressed
+                    ? AppColors.BLACK_24
+                    : AppColors.TRANSPARENT;
     }
   }
 
@@ -273,6 +293,12 @@ class _CommonButtonState extends State<CommonButton> {
     }
   }
 
+  List<BoxShadow> _shadow() {
+    return widget.type == CommonButtonType.Primary && (focused || hovered)
+        ? AppWidgetStyles.commonButtonShadow(context: context)
+        : [];
+  }
+
   Widget _button(BuildContext context) {
     switch (widget.type) {
       case CommonButtonType.Outlined:
@@ -281,87 +307,108 @@ class _CommonButtonState extends State<CommonButton> {
       default:
         return Stack(
           children: [
+            // button
             Positioned.fill(
-              child: Container(
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 50),
                 decoration: BoxDecoration(
                   color: _backgroundColor(context),
+                  borderRadius:
+                      BorderRadius.circular(CommonButton._borderRadius),
+                  boxShadow: _shadow(),
+                ),
+              ),
+            ),
+            // overlay
+            Positioned.fill(
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 100),
+                decoration: BoxDecoration(
+                  color: _overlayColor(context),
                   borderRadius:
                       BorderRadius.circular(CommonButton._borderRadius),
                 ),
               ),
             ),
-            Positioned.fill(
-              child: AnimatedOpacity(
-                opacity: pressed ? 1 : 0,
-                duration: Duration(milliseconds: 100),
+            Focus(
+              focusNode: widget.focusNode,
+              autofocus: widget.autoFocus,
+              onFocusChange: (value) {
+                setState(() {
+                  focused = value;
+                });
+              },
+              child: GestureDetector(
+                onTap: widget.loading ? null : widget.onPressed,
+                onTapDown: (details) {
+                  if (!disabled & !widget.loading) {
+                    setState(() {
+                      hovered = true;
+                      FocusScope.of(context).requestFocus(FocusNode());
+                      // pressed = true;
+                    });
+                  }
+                },
+                onTapUp: (details) {
+                  if (!disabled & !widget.loading) {
+                    setState(() {
+                      hovered = false;
+                      pressed = true;
+                    });
+                    Future.delayed(Duration(milliseconds: 100), () {
+                      setState(() {
+                        pressed = false;
+                      });
+                    });
+                  }
+                },
+                onTapCancel: () {
+                  if (!disabled && !widget.loading)
+                    setState(() {
+                      hovered = false;
+                      // pressed = false;
+                    });
+                },
                 child: Container(
+                  padding: widget.padding != null
+                      ? widget.padding
+                      : _contentPadding(context),
                   decoration: BoxDecoration(
-                    color: _overlayColor(context),
+                    color: Colors.transparent,
                     borderRadius:
-                        BorderRadius.circular(CommonButton._borderRadius),
+                        new BorderRadius.circular(CommonButton._borderRadius),
+                    border: Border.fromBorderSide(_border(context)),
                   ),
-                ),
-              ),
-            ),
-            GestureDetector(
-              behavior: HitTestBehavior.translucent,
-              onTap: widget.loading ? null : widget.onPressed,
-              onTapDown: (details) {
-                if (!disabled & !widget.loading) {
-                  setState(() {
-                    pressed = true;
-                  });
-                }
-              },
-              onTapUp: (details) {
-                setState(() {
-                  pressed = false;
-                });
-              },
-              onTapCancel: () {
-                setState(() {
-                  pressed = false;
-                });
-              },
-              child: Container(
-                padding: widget.padding != null
-                    ? widget.padding
-                    : _contentPadding(context),
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  borderRadius:
-                      new BorderRadius.circular(CommonButton._borderRadius),
-                  border: Border.fromBorderSide(_border(context)),
-                ),
-                child: Center(
-                  child: widget.loading
-                      ? CommonLoader(
-                          size: _loaderSize(),
-                          inverse: _isLoaderInversed(context),
-                        )
-                      : Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (widget.prefixBuilder != null)
-                              widget.prefixBuilder(
-                                context,
-                                widget.type,
-                                null,
-                                _color(context),
+                  child: Center(
+                    child: widget.loading
+                        ? CommonLoader(
+                            size: _loaderSize(),
+                            inverse: _isLoaderInversed(context),
+                          )
+                        : Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (widget.prefixBuilder != null)
+                                widget.prefixBuilder(
+                                  context,
+                                  widget.type,
+                                  null,
+                                  _color(context),
+                                ),
+                              Flexible(
+                                flex: 1,
+                                child: _content(context),
                               ),
-                            Flexible(
-                              flex: 1,
-                              child: _content(context),
-                            ),
-                            if (widget.suffixBuilder != null)
-                              widget.suffixBuilder(
-                                context,
-                                widget.type,
-                                null,
-                                _color(context),
-                              ),
-                          ],
-                        ),
+                              if (widget.suffixBuilder != null)
+                                widget.suffixBuilder(
+                                  context,
+                                  widget.type,
+                                  null,
+                                  _color(context),
+                                ),
+                            ],
+                          ),
+                  ),
                 ),
               ),
             ),

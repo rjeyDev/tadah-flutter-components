@@ -82,6 +82,16 @@ class AppWidgetStyles {
     );
   }
 
+  static List<BoxShadow> commonButtonShadow({@required BuildContext context}) {
+    return [
+      BoxShadow(
+        color: AppColors.COMMON_BUTTON_SHADOW_54_LIGHT,
+        offset: Offset(0, 8),
+        blurRadius: 32,
+      ),
+    ];
+  }
+
   static List<BoxShadow> imageCardBoxShadow({
     @required BuildContext context,
   }) {

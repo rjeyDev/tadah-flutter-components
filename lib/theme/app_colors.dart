@@ -109,7 +109,7 @@ class AppColors {
   static const Color BACKGROUND_MAIN_LIGHT = WHITE;
   static const Color BACKGROUND_MAIN_DARK = BLACK;
 
-  static const Color BUTTON_BACKGROUND_DISABLED_LIGHT = const Color(0x08000000);
+  static const Color BACKGROUND_BUTTON_DISABLED_LIGHT = const Color(0x08000000);
 
   static const Color BACKGROUND_CARD_COMMON_LIGHT = const Color(0x0F000000);
   static const Color BACKGROUND_CARD_COMMON_DARK = const Color(0x0FFFFFFF);
@@ -126,6 +126,10 @@ class AppColors {
       const Color(0x06000000);
   static const Color BORDER_INPUT_DISABLED_UNDERLINED_DARK =
       const Color(0x06FFFFFF);
+
+//shadow colors
+
+  static const Color COMMON_BUTTON_SHADOW_54_LIGHT = const Color(0x8A6D38E0);
 
   static const Color SHADOW_54_LIGHT = const Color(0x8A9296B9);
   static const Color SHADOW_24_LIGHT = const Color(0x3D9296B9);
