@@ -50,7 +50,7 @@ class AppTextStyles {
   static const double inputHeightBasicCalc = inputFontSize * basicLineHeight;
 
   static const TextStyle H1 = TextStyle(
-    color: AppColors.TEXT_PRIMARY_LIGHT,
+    color: AppColors.TEXT_PRIMARY_DARK,
     fontFamily: mainFontFamily,
     fontSize: header1FontSize,
     fontWeight: headerFontWeight,
@@ -60,7 +60,7 @@ class AppTextStyles {
   );
 
   static const TextStyle H2 = TextStyle(
-    color: AppColors.TEXT_PRIMARY_LIGHT,
+    color: AppColors.TEXT_PRIMARY_DARK,
     fontFamily: mainFontFamily,
     fontSize: header2FontSize,
     fontWeight: headerFontWeight,
@@ -70,7 +70,7 @@ class AppTextStyles {
   );
 
   static const TextStyle H3 = TextStyle(
-    color: AppColors.TEXT_PRIMARY_LIGHT,
+    color: AppColors.TEXT_PRIMARY_DARK,
     fontFamily: mainFontFamily,
     fontSize: header3FontSize,
     fontWeight: headerFontWeight,
@@ -80,7 +80,7 @@ class AppTextStyles {
   );
 
   static const TextStyle H4 = TextStyle(
-    color: AppColors.TEXT_PRIMARY_LIGHT,
+    color: AppColors.TEXT_PRIMARY_DARK,
     fontFamily: mainFontFamily,
     fontSize: header4FontSize,
     fontWeight: headerFontWeight,
@@ -90,7 +90,7 @@ class AppTextStyles {
   );
 
   static const TextStyle H5 = TextStyle(
-    color: AppColors.TEXT_PRIMARY_LIGHT,
+    color: AppColors.TEXT_PRIMARY_DARK,
     fontFamily: mainFontFamily,
     fontSize: header5FontSize,
     fontWeight: headerFontWeight,
@@ -100,7 +100,7 @@ class AppTextStyles {
   );
 
   static const TextStyle H6 = TextStyle(
-    color: AppColors.TEXT_PRIMARY_LIGHT,
+    color: AppColors.TEXT_PRIMARY_DARK,
     fontFamily: mainFontFamily,
     fontSize: header6FontSize,
     fontWeight: headerFontWeightSmall,
@@ -110,7 +110,7 @@ class AppTextStyles {
   );
 
   static const TextStyle SUBTITLE = TextStyle(
-    color: AppColors.TEXT_PRIMARY_LIGHT,
+    color: AppColors.TEXT_PRIMARY_DARK,
     fontFamily: mainFontFamily,
     fontSize: subtitleFontSize,
     fontWeight: headerFontWeightSmall,
@@ -119,7 +119,7 @@ class AppTextStyles {
     height: basicLineHeight,
   );
   static const TextStyle BODY = TextStyle(
-    color: AppColors.TEXT_PRIMARY_LIGHT,
+    color: AppColors.TEXT_PRIMARY_DARK,
     fontFamily: mainFontFamily,
     fontSize: bodyFontSize,
     fontWeight: basicFontWeight,
@@ -128,7 +128,7 @@ class AppTextStyles {
     height: basicLineHeight,
   );
   static const TextStyle BODY_MORE_TEXT = TextStyle(
-    color: AppColors.TEXT_PRIMARY_LIGHT,
+    color: AppColors.TEXT_PRIMARY_DARK,
     fontFamily: mainFontFamily,
     fontSize: bodyFontSize,
     fontWeight: basicFontWeight,
@@ -138,7 +138,7 @@ class AppTextStyles {
   );
 
   static const TextStyle SECONDARY = TextStyle(
-    color: AppColors.TEXT_PRIMARY_LIGHT,
+    color: AppColors.TEXT_PRIMARY_DARK,
     fontFamily: mainFontFamily,
     fontSize: secondaryFontSize,
     fontWeight: basicFontWeight,
@@ -148,7 +148,7 @@ class AppTextStyles {
   );
 
   static const TextStyle SECONDARY_MORE_TEXT = TextStyle(
-    color: AppColors.TEXT_PRIMARY_LIGHT,
+    color: AppColors.TEXT_PRIMARY_DARK,
     fontFamily: mainFontFamily,
     fontSize: secondaryFontSize,
     fontWeight: basicFontWeight,
@@ -158,7 +158,7 @@ class AppTextStyles {
   );
 
   static const TextStyle NOTE = TextStyle(
-    color: AppColors.TEXT_PRIMARY_LIGHT,
+    color: AppColors.TEXT_PRIMARY_DARK,
     fontFamily: mainFontFamily,
     fontSize: noteFontSize,
     fontWeight: basicFontWeight,
@@ -168,7 +168,7 @@ class AppTextStyles {
   );
 
   static const TextStyle NOTE_ACCENT = TextStyle(
-    color: AppColors.TEXT_PRIMARY_LIGHT,
+    color: AppColors.TEXT_PRIMARY_DARK,
     fontFamily: mainFontFamily,
     fontSize: noteFontSize,
     fontWeight: headerFontWeightSmall,

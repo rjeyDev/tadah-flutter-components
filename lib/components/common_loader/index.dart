@@ -11,10 +11,10 @@ class CommonLoader extends StatefulWidget {
   static const Curve curve = Curves.linear;
   static const double _pullToRefreshLoaderSize = 18.0;
 
-  static Tween<Offset> _refreshIndicatorOffsetTween = Tween<Offset>(
-    begin: const Offset(0, -10),
-    end: const Offset(0, 0),
-  );
+  // static Tween<Offset> _refreshIndicatorOffsetTween = Tween<Offset>(
+  //   begin: const Offset(0, -10),
+  //   end: const Offset(0, 0),
+  // );
 
   static Widget buildRefreshIndicator(
     BuildContext context,
@@ -237,7 +237,7 @@ class _IndicatorPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final strokeWidth = size.width / 6;
+    final strokeWidth = size.width / 8;
 
     final Rect drawingRect = Rect.fromCircle(
       center: Offset(size.width / 2, size.height / 2),

@@ -109,6 +109,8 @@ class AppColors {
   static const Color BACKGROUND_MAIN_LIGHT = WHITE;
   static const Color BACKGROUND_MAIN_DARK = BLACK;
 
+  static const Color BUTTON_BACKGROUND_DISABLED_LIGHT = const Color(0x08000000);
+
   static const Color BACKGROUND_CARD_COMMON_LIGHT = const Color(0x0F000000);
   static const Color BACKGROUND_CARD_COMMON_DARK = const Color(0x0FFFFFFF);
 
@@ -137,4 +139,6 @@ class AppColors {
   // button
   static const Color BUTTON_BACKGROUND_COMMON_LIGHT = BLUE_VIOLET_500;
   static const Color BUTTON_BACKGROUND_COMMON_DARK = BLUE_VIOLET_500;
+
+  static const Color ACCENT_MAIN = BLUE_VIOLET_500;
 }
