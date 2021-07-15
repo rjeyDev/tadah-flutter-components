@@ -160,22 +160,27 @@ class _CommonIconButtonState extends State<CommonIconButton> {
   }
 
   Color _overlayColor(context) {
+    if (widget.loading || disabled) return AppColors.TRANSPARENT;
     switch (widget.type) {
       case CommonButtonType.Outlined:
       case CommonButtonType.Contrast:
-        return focused
-            ? AppColors.BLUE_VIOLET_500_16
-            : (hovered || pressed)
-                ? AppColors.BLUE_VIOLET_500_24
-                : AppColors.TRANSPARENT;
+        return hovered
+            ? AppColors.BLUE_VIOLET_500_8
+            : focused
+                ? AppColors.BLUE_VIOLET_500_16
+                : (pressed)
+                    ? AppColors.BLUE_VIOLET_500_24
+                    : AppColors.TRANSPARENT;
         break;
       case CommonButtonType.Primary:
       default:
-        return focused
-            ? AppColors.BLACK_16
-            : (pressed || hovered)
-                ? AppColors.BLACK_24
-                : AppColors.TRANSPARENT;
+        return hovered
+            ? AppColors.BLACK_8
+            : focused
+                ? AppColors.BLACK_16
+                : pressed
+                    ? AppColors.BLACK_24
+                    : AppColors.TRANSPARENT;
     }
   }
 
@@ -203,7 +208,7 @@ class _CommonIconButtonState extends State<CommonIconButton> {
           children: [
             Positioned.fill(
               child: AnimatedContainer(
-                duration: Duration(milliseconds: 50),
+                duration: Duration(milliseconds: 100),
                 decoration: BoxDecoration(
                   color: _backgroundColor(context),
                   borderRadius:
@@ -230,55 +235,73 @@ class _CommonIconButtonState extends State<CommonIconButton> {
                   focused = value;
                 });
               },
-              child: GestureDetector(
-                onTap: widget.loading ? null : widget.onPressed,
-                onTapDown: (details) {
-                  if (!disabled & !widget.loading) {
-                    setState(() {
-                      // hovered = true;
-                      pressed = true;
-                      FocusScope.of(context).requestFocus(FocusNode());
-                      // pressed = true;
-                    });
-                  }
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                onEnter: (event) {
+                  print('enter');
+                  setState(() {
+                    hovered = true;
+                  });
                 },
-                onTapUp: (details) {
-                  if (!disabled & !widget.loading) {
-                    setState(() {
-                      // hovered = false;
-                      pressed = false;
-                    });
-                    // Future.delayed(Duration(milliseconds: 100), () {
-                    //   setState(() {
-                    //     pressed = false;
-                    //   });
-                    // });
-                  }
+                // onHover: (event) {
+                //   if (!pressed)
+                //     setState(() {
+                //       hovered = true;
+                //     });
+                // },
+                onExit: (event) {
+                  print('exit');
+                  setState(() {
+                    hovered = false;
+                  });
                 },
-                onTapCancel: () {
-                  if (!disabled && !widget.loading)
-                    setState(() {
-                      // hovered = false;
-                      pressed = false;
-                    });
-                },
-                child: Container(
-                  padding: widget.padding != null
-                      ? widget.padding
-                      : _contentPadding(context),
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    borderRadius: new BorderRadius.circular(
-                        CommonIconButton._borderRadius),
-                    border: Border.fromBorderSide(_border(context)),
-                  ),
-                  child: Center(
-                    child: widget.loading
-                        ? CommonLoader(
-                            size: _loaderSize(),
-                            inverse: _isLoaderInversed(context),
-                          )
-                        : _content(context),
+                child: GestureDetector(
+                  onTap: widget.loading ? null : widget.onPressed,
+                  onTapDown: (details) {
+                    if (!disabled & !widget.loading) {
+                      print('down');
+                      setState(() {
+                        hovered = false;
+                        pressed = true;
+                        FocusScope.of(context).requestFocus(FocusNode());
+                        // pressed = true;
+                      });
+                    }
+                  },
+                  onTapUp: (details) {
+                    if (!disabled & !widget.loading) {
+                      print('up');
+                      setState(() {
+                        pressed = false;
+                      });
+                    }
+                  },
+                  onTapCancel: () {
+                    if (!disabled && !widget.loading) {
+                      print('cancel');
+                      setState(() {
+                        pressed = false;
+                      });
+                    }
+                  },
+                  child: Container(
+                    padding: widget.padding != null
+                        ? widget.padding
+                        : _contentPadding(context),
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius: new BorderRadius.circular(
+                          CommonIconButton._borderRadius),
+                      border: Border.fromBorderSide(_border(context)),
+                    ),
+                    child: Center(
+                      child: widget.loading
+                          ? CommonLoader(
+                              size: _loaderSize(),
+                              inverse: _isLoaderInversed(context),
+                            )
+                          : _content(context),
+                    ),
                   ),
                 ),
               ),

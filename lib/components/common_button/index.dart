@@ -1,5 +1,6 @@
 // @dart=2.9
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tadah_flutter_components/components/common_loader/index.dart';
 import 'package:tadah_flutter_components/theme/app_colors.dart';
 import 'package:tadah_flutter_components/theme/app_text_styles.dart';
@@ -258,14 +259,17 @@ class _CommonButtonState extends State<CommonButton> {
   }
 
   Color _overlayColor(context) {
+    if (widget.loading || disabled) return AppColors.TRANSPARENT;
     switch (widget.type) {
       case CommonButtonType.Outlined:
       case CommonButtonType.Contrast:
-        return focused
-            ? AppColors.BLUE_VIOLET_500_16
-            : (hovered || pressed)
-                ? AppColors.BLUE_VIOLET_500_24
-                : AppColors.TRANSPARENT;
+        return hovered
+            ? AppColors.BLUE_VIOLET_500_8
+            : focused
+                ? AppColors.BLUE_VIOLET_500_16
+                : (pressed)
+                    ? AppColors.BLUE_VIOLET_500_24
+                    : AppColors.TRANSPARENT;
         break;
       case CommonButtonType.Primary:
       default:
@@ -294,6 +298,7 @@ class _CommonButtonState extends State<CommonButton> {
   }
 
   List<BoxShadow> _shadow() {
+    if (widget.loading || disabled) return [];
     return widget.type == CommonButtonType.Primary && (focused || hovered)
         ? AppWidgetStyles.commonButtonShadow(context: context)
         : [];
@@ -310,7 +315,7 @@ class _CommonButtonState extends State<CommonButton> {
             // button
             Positioned.fill(
               child: AnimatedContainer(
-                duration: Duration(milliseconds: 50),
+                duration: Duration(milliseconds: 100),
                 decoration: BoxDecoration(
                   color: _backgroundColor(context),
                   borderRadius:
@@ -338,76 +343,94 @@ class _CommonButtonState extends State<CommonButton> {
                   focused = value;
                 });
               },
-              child: GestureDetector(
-                onTap: widget.loading ? null : widget.onPressed,
-                onTapDown: (details) {
-                  if (!disabled & !widget.loading) {
-                    setState(() {
-                      hovered = true;
-                      FocusScope.of(context).requestFocus(FocusNode());
-                      // pressed = true;
-                    });
-                  }
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                onEnter: (event) {
+                  print('enter');
+                  setState(() {
+                    hovered = true;
+                  });
                 },
-                onTapUp: (details) {
-                  if (!disabled & !widget.loading) {
-                    setState(() {
-                      hovered = false;
-                      pressed = true;
-                    });
-                    Future.delayed(Duration(milliseconds: 100), () {
+                // onHover: (event) {
+                //   setState(() {
+                //     hovered = true;
+                //   });
+                // },
+                onExit: (event) {
+                  print('exit');
+                  setState(() {
+                    hovered = false;
+                  });
+                },
+                child: GestureDetector(
+                  onTap: widget.loading ? null : widget.onPressed,
+                  onTapDown: (details) {
+                    if (!disabled & !widget.loading) {
+                      print('down');
+                      setState(() {
+                        hovered = false;
+                        pressed = true;
+                        FocusScope.of(context).requestFocus(FocusNode());
+                        // pressed = true;
+                      });
+                    }
+                  },
+                  onTapUp: (details) {
+                    if (!disabled & !widget.loading) {
+                      print('up');
                       setState(() {
                         pressed = false;
                       });
-                    });
-                  }
-                },
-                onTapCancel: () {
-                  if (!disabled && !widget.loading)
-                    setState(() {
-                      hovered = false;
-                      // pressed = false;
-                    });
-                },
-                child: Container(
-                  padding: widget.padding != null
-                      ? widget.padding
-                      : _contentPadding(context),
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    borderRadius:
-                        new BorderRadius.circular(CommonButton._borderRadius),
-                    border: Border.fromBorderSide(_border(context)),
-                  ),
-                  child: Center(
-                    child: widget.loading
-                        ? CommonLoader(
-                            size: _loaderSize(),
-                            inverse: _isLoaderInversed(context),
-                          )
-                        : Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              if (widget.prefixBuilder != null)
-                                widget.prefixBuilder(
-                                  context,
-                                  widget.type,
-                                  null,
-                                  _color(context),
+                    }
+                  },
+                  onTapCancel: () {
+                    if (!disabled && !widget.loading) {
+                      print('cancel');
+                      setState(() {
+                        pressed = false;
+                      });
+                    }
+                  },
+                  child: Container(
+                    padding: widget.padding != null
+                        ? widget.padding
+                        : _contentPadding(context),
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      borderRadius:
+                          new BorderRadius.circular(CommonButton._borderRadius),
+                      border: Border.fromBorderSide(_border(context)),
+                    ),
+                    child: Center(
+                      child: widget.loading
+                          ? CommonLoader(
+                              size: _loaderSize(),
+                              inverse: _isLoaderInversed(context),
+                            )
+                          : Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (widget.prefixBuilder != null)
+                                  widget.prefixBuilder(
+                                    context,
+                                    widget.type,
+                                    null,
+                                    _color(context),
+                                  ),
+                                Flexible(
+                                  flex: 1,
+                                  child: _content(context),
                                 ),
-                              Flexible(
-                                flex: 1,
-                                child: _content(context),
-                              ),
-                              if (widget.suffixBuilder != null)
-                                widget.suffixBuilder(
-                                  context,
-                                  widget.type,
-                                  null,
-                                  _color(context),
-                                ),
-                            ],
-                          ),
+                                if (widget.suffixBuilder != null)
+                                  widget.suffixBuilder(
+                                    context,
+                                    widget.type,
+                                    null,
+                                    _color(context),
+                                  ),
+                              ],
+                            ),
+                    ),
                   ),
                 ),
               ),
