@@ -1,7 +1,7 @@
 // @dart=2.9
 import 'package:flutter/material.dart';
-import 'package:tadah_flutter_components/components/common_loader/index.dart';
-import 'package:tadah_flutter_components/components/touchable_opacity/index.dart';
+import 'package:tadah_flutter_components/components/buttons/common_loader/index.dart';
+import 'package:tadah_flutter_components/components/buttons/touchable_opacity/index.dart';
 import 'package:tadah_flutter_components/theme/app_text_styles.dart';
 import 'package:tadah_flutter_components/theme/theme/src/theme.dart';
 

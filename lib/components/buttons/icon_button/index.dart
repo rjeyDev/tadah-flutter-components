@@ -1,7 +1,8 @@
 // @dart=2.9
 import 'package:flutter/material.dart';
-import 'package:tadah_flutter_components/components/common_button/index.dart';
-import 'package:tadah_flutter_components/components/common_loader/index.dart';
+import 'package:tadah_flutter_components/components/buttons/common_button/index.dart';
+import 'package:tadah_flutter_components/components/buttons/common_loader/index.dart';
+
 import 'package:tadah_flutter_components/theme/app_colors.dart';
 import 'package:tadah_flutter_components/theme/app_text_styles.dart';
 import 'package:tadah_flutter_components/theme/theme/src/theme.dart';
