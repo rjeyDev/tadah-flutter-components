@@ -19,6 +19,11 @@ class AppColors {
   static const Color BLACK_24 = const Color(0x3D000000);
   static const Color BLACK_16 = const Color(0x29000000);
   static const Color BLACK_8 = const Color(0x14000000);
+  static const Color BLACK_54_WO = const Color(0xFF757575);
+  static const Color BLACK_38_WO = const Color(0xFF9E9E9E);
+  static const Color BLACK_24_WO = const Color(0xFFC2C2C2);
+  static const Color BLACK_16_WO = const Color(0xFFD6D6D6);
+  static const Color BLACK_8_WO = const Color(0xFFEBEBEB);
 
   static const Color WHITE = const Color(0xFFFFFFFF);
   static const Color WHITE_54 = const Color(0x8AFFFFFF);
@@ -33,6 +38,12 @@ class AppColors {
   static const Color BLUE_VIOLET_500_24 = const Color(0x3D773DF3);
   static const Color BLUE_VIOLET_500_16 = const Color(0x29773DF3);
   static const Color BLUE_VIOLET_500_8 = const Color(0x14773DF3);
+  static const Color BLUE_VIOLET_500_16_WO = const Color(0xFFE9E0FD);
+  static const Color BLUE_VIOLET_500_24_WO = const Color(0xFFDFD1FC);
+  static const Color BLUE_VIOLET_500_38_WO = const Color(0xFFCBB5FA);
+  static const Color BLUE_VIOLET_500_HOVERED = const Color(0xFF6D38E0);
+  static const Color BLUE_VIOLET_500_FOCUSED = const Color(0xFF6433CC);
+  static const Color BLUE_VIOLET_500_PRESSED = const Color(0xFF5A2EB9);
 
   static const Color ORANGE_PEEL_500 = const Color(0xFFFFBC0F);
   static const Color ORANGE_PEEL_500_54 = const Color(0x8AFFBC0F);
