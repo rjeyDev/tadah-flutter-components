@@ -319,8 +319,12 @@ class _LabelSwitchState extends State<LabelSwitch>
                 isScrollable: true,
                 onTap: null,
                 controller: _tabController,
-                labelColor: AppColors.ACCENT_MAIN,
-                unselectedLabelColor: AppColors.TEXT_PRIMARY_LIGHT,
+                labelColor: disabled
+                    ? AppColors.TEXT_DISABLED_LIGHT
+                    : AppColors.ACCENT_MAIN,
+                unselectedLabelColor: disabled
+                    ? AppColors.TEXT_DISABLED_LIGHT
+                    : AppColors.TEXT_PRIMARY_LIGHT,
                 labelPadding: const EdgeInsets.symmetric(
                   vertical: 8,
                   horizontal: 4,
