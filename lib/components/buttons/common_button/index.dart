@@ -242,6 +242,7 @@ class _CommonButtonState extends State<CommonButton> {
     return Text(
       widget.text,
       style: AppTextStyles.styleFrom(
+        context: context,
         style: TextStyles.SECONDARY,
         fontWeight: _fontWeight(context),
         fontSize: _fontSize(context),

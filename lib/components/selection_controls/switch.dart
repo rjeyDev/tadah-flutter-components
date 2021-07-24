@@ -4,8 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tadah_flutter_components/tadah_flutter_components.dart';
 
-enum SwitchType { classic, labeled }
-
 class AppSwitch extends StatefulWidget {
   AppSwitch({
     Key key,
@@ -122,12 +120,13 @@ class _AppSwitchState extends State<AppSwitch>
         },
         child: GestureDetector(
           onTap: () {
-            setState(() {
-              !widget.value
-                  ? _animationController.forward()
-                  : _animationController.reverse();
-              widget.onChanged(!widget.value);
-            });
+            if (!disabled)
+              setState(() {
+                widget.onChanged(!widget.value);
+                !widget.value
+                    ? _animationController.forward()
+                    : _animationController.reverse();
+              });
           },
           onTapDown: (details) {
             if (!disabled) {
@@ -186,6 +185,177 @@ class _AppSwitchState extends State<AppSwitch>
                   ),
                 ),
               ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class LabelSwitch extends StatefulWidget {
+  LabelSwitch({
+    Key key,
+    this.focusNode,
+    this.autoFocus = false,
+    this.initialIndex = 0,
+    this.first = '',
+    this.second = '',
+    @required this.onChanged,
+  }) : super(key: key);
+
+  final FocusNode focusNode;
+  final bool autoFocus;
+  final int initialIndex;
+  final String first;
+  final String second;
+  final ValueChanged<int> onChanged;
+
+  @override
+  _LabelSwitchState createState() => _LabelSwitchState();
+}
+
+class _LabelSwitchState extends State<LabelSwitch>
+    with SingleTickerProviderStateMixin {
+  TabController _tabController;
+  bool hovered = false;
+  bool focused = false;
+  bool pressed = false;
+  bool get disabled => widget.onChanged == null;
+
+  @override
+  void initState() {
+    super.initState();
+    // _currentIndex = widget.initialIndex;
+    _tabController = TabController(
+        vsync: this, length: 2, initialIndex: widget.initialIndex);
+
+    _tabController.addListener(() {
+      setState(() {
+        widget.onChanged(_tabController.index);
+      });
+    });
+  }
+
+  Color get indicatorColor {
+    return disabled
+        ? AppColors.BACKGROUND_BUTTON_DISABLED_LIGHT
+        : pressed
+            ? AppColors.BLUE_VIOLET_500_16_WO
+            : focused
+                ? AppColors.BLUE_VIOLET_500_24_WO
+                : AppColors.BLUE_VIOLET_500_16_WO;
+  }
+
+  Color get borderColor {
+    return disabled
+        ? AppColors.BLACK_8_WO
+        : pressed || focused || hovered
+            ? AppColors.ACCENT_MAIN
+            : AppColors.BLACK_8_WO;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Focus(
+      focusNode: widget.focusNode,
+      autofocus: widget.autoFocus,
+      onFocusChange: (value) {
+        setState(() {
+          focused = value;
+        });
+      },
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        onEnter: (event) {
+          setState(() {
+            hovered = true;
+          });
+        },
+        onExit: (event) {
+          setState(() {
+            hovered = false;
+          });
+        },
+        child: GestureDetector(
+          onTap: () {
+            if (!disabled) {
+              _tabController.animateTo((_tabController.index + 1) % 2);
+            }
+          },
+          onTapDown: (details) {
+            if (!disabled) {
+              setState(() {
+                pressed = true;
+                FocusScope.of(context).requestFocus(FocusNode());
+                // pressed = true;
+              });
+            }
+          },
+          onTapUp: (details) {
+            if (!disabled) {
+              setState(() {
+                pressed = false;
+              });
+            }
+          },
+          onTapCancel: () {
+            if (!disabled) {
+              print('cancel');
+              setState(() {
+                pressed = false;
+              });
+            }
+          },
+          child: AnimatedContainer(
+            duration: Duration(milliseconds: 100),
+            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+            decoration: BoxDecoration(
+              border: Border.all(color: borderColor, width: 1.5),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: IgnorePointer(
+              child: TabBar(
+                isScrollable: true,
+                onTap: null,
+                controller: _tabController,
+                labelColor: AppColors.ACCENT_MAIN,
+                unselectedLabelColor: AppColors.TEXT_PRIMARY_LIGHT,
+                labelPadding: const EdgeInsets.symmetric(
+                  vertical: 8,
+                  horizontal: 4,
+                ),
+                // overlayColor: MaterialStateProperty.resolveWith((states) {
+                //   if (states.contains(MaterialState.disabled))
+                //     return AppColors.BLACK_16_WO;
+                //   if (states.contains(MaterialState.pressed)) {
+                //     return AppColors.BLUE_VIOLET_500_38_WO;
+                //   }
+                //   return AppColors.BLUE_VIOLET_500_16_WO;
+                // }),
+                indicator: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: indicatorColor,
+                ),
+                indicatorWeight: 2.0,
+                indicatorSize: TabBarIndicatorSize.label,
+                tabs: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    child: Text(
+                      widget.first,
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    child: Text(
+                      widget.second,
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

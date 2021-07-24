@@ -180,7 +180,7 @@ class AppTextStyles {
   static TextStyle styleFrom({
     TextStyles style,
     Color color,
-    BuildContext context,
+    @required BuildContext context,
     String fontFamily,
     FontWeight fontWeight,
     double fontSize,

@@ -175,6 +175,7 @@ class _RadioButtonState extends State<RadioButton> {
                     Text(
                       widget.label,
                       style: AppTextStyles.styleFrom(
+                        context: context,
                         style: TextStyles.SECONDARY,
                         color: disabled
                             ? AppColors.BLUE_VIOLET_500_38
