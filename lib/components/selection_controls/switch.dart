@@ -39,7 +39,6 @@ class _AppSwitchState extends State<AppSwitch>
       vsync: this,
       duration: Duration(milliseconds: 200),
     );
-    print(hovered);
     _animation = Tween<Offset>(
             begin: Offset(0, 0),
             end: Offset((trackWidth - togglerWidth) / togglerWidth, 0))
@@ -146,7 +145,6 @@ class _AppSwitchState extends State<AppSwitch>
           },
           onTapCancel: () {
             if (!disabled) {
-              print('cancel');
               setState(() {
                 pressed = false;
               });
@@ -281,12 +279,14 @@ class _LabelSwitchState extends State<LabelSwitch>
           onTap: () {
             if (!disabled) {
               _tabController.animateTo((_tabController.index + 1) % 2);
+              focused = false;
             }
           },
           onTapDown: (details) {
             if (!disabled) {
               setState(() {
                 pressed = true;
+                focused = false;
                 FocusScope.of(context).requestFocus(FocusNode());
                 // pressed = true;
               });
@@ -301,7 +301,6 @@ class _LabelSwitchState extends State<LabelSwitch>
           },
           onTapCancel: () {
             if (!disabled) {
-              print('cancel');
               setState(() {
                 pressed = false;
               });

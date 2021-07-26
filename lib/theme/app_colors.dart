@@ -38,6 +38,7 @@ class AppColors {
   static const Color BLUE_VIOLET_500_24 = const Color(0x3D773DF3);
   static const Color BLUE_VIOLET_500_16 = const Color(0x29773DF3);
   static const Color BLUE_VIOLET_500_8 = const Color(0x14773DF3);
+  static const Color BLUE_VIOLET_500_8_WO = const Color(0xFFF5F0FE);
   static const Color BLUE_VIOLET_500_16_WO = const Color(0xFFE9E0FD);
   static const Color BLUE_VIOLET_500_24_WO = const Color(0xFFDFD1FC);
   static const Color BLUE_VIOLET_500_38_WO = const Color(0xFFCBB5FA);
