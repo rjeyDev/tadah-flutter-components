@@ -4,7 +4,7 @@ class AppColors {
   AppColors._();
 
   //basic
-  static const Color TRANSPARENT = Color(0x007F7F7F);
+  static const Color TRANSPARENT = Color(0x00FFFFFF);
   static const Color TRANSPARENT_LIGHT = Color(0x00FFFFFF);
   static const Color TRANSPARENT_DARK = Color(0x00000000);
 

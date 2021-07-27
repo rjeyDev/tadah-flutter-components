@@ -198,7 +198,7 @@ class _RoundedTabBarState extends State<RoundedTabBar> {
                 setState(() {
                   focused = false;
                 });
-              widget.onTap(index);
+              if (widget.onTap != null) widget.onTap(index);
             },
             tabs: hasPrefix
                 ? widget.tabs

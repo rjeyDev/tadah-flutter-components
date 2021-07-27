@@ -45,6 +45,7 @@ class _AppSwitchState extends State<AppSwitch>
         .animate(
       CurvedAnimation(parent: _animationController, curve: Curves.linear),
     );
+
     focused = widget.autoFocus;
     super.initState();
   }
