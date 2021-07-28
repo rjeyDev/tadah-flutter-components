@@ -1,11 +1,10 @@
 // @dart=2.9
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:tadah_flutter_components/tadah_flutter_components.dart';
 
-class AppChip extends StatefulWidget {
-  AppChip({
+class Tag extends StatefulWidget {
+  Tag({
     @required this.selected,
     @required this.onSelected,
     @required this.label,
@@ -30,10 +29,10 @@ class AppChip extends StatefulWidget {
   final VoidCallback onDeleted;
 
   @override
-  _AppChipState createState() => _AppChipState();
+  _TagState createState() => _TagState();
 }
 
-class _AppChipState extends State<AppChip> {
+class _TagState extends State<Tag> {
   bool get disabled => widget.enabled == false;
   bool hovered = false;
 
@@ -42,9 +41,9 @@ class _AppChipState extends State<AppChip> {
     return Theme(
       data: ThemeData(
         splashColor: AppColors.TRANSPARENT,
-        hoverColor: AppColors.BLUE_VIOLET_500_8,
-        focusColor: AppColors.BLUE_VIOLET_500_16,
-        highlightColor: AppColors.BLUE_VIOLET_500_24,
+        hoverColor: AppColors.COOL_GRAY_500_24,
+        focusColor: AppColors.COOL_GRAY_500_38,
+        highlightColor: AppColors.COOL_GRAY_500_54,
       ),
       child: RawChip(
         isEnabled: widget.enabled,
@@ -58,30 +57,23 @@ class _AppChipState extends State<AppChip> {
         onDeleted: widget.onDeleted,
         pressElevation: 0,
         label: widget.label,
-        disabledColor: AppColors.TRANSPARENT,
+        disabledColor: AppColors.COOL_GRAY_500_8,
         labelStyle: AppTextStyles.styleFrom(
           context: context,
           style: TextStyles.SECONDARY,
-          color: disabled ? AppColors.BLACK_54 : AppColors.BLACK,
+          color: disabled
+              ? AppColors.BLACK_54
+              : widget.selected
+                  ? AppColors.WHITE
+                  : AppColors.BLACK,
         ),
         labelPadding: widget.onDeleted == null
             ? EdgeInsets.symmetric(horizontal: 8, vertical: 2)
             : EdgeInsets.fromLTRB(4, 2, 4, 2),
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-            color: disabled
-                ? AppColors.BLACK_24_WO
-                : widget.selected
-                    ? AppColors.BLUE_VIOLET_500
-                    : AppColors.COOL_GRAY_500_54,
-            width: 1.5,
-          ),
-          borderRadius: BorderRadius.circular(40),
-        ),
-        selectedColor: AppColors.TRANSPARENT,
+        selectedColor: AppColors.ACCENT_MAIN,
         backgroundColor: widget.selected
-            ? AppColors.BLUE_VIOLET_500_8
-            : AppColors.TRANSPARENT,
+            ? AppColors.TRANSPARENT
+            : AppColors.COOL_GRAY_500_16,
         deleteIcon: AnimatedContainer(
           duration: Duration(milliseconds: 50),
           padding: EdgeInsets.all(5),
@@ -90,13 +82,12 @@ class _AppChipState extends State<AppChip> {
             color: disabled
                 ? AppColors.BLACK_16
                 : widget.selected
-                    ? AppColors.BLUE_VIOLET_500_16
+                    ? AppColors.WHITE_16
                     : AppColors.BLACK_8,
           ),
           child: Icon(
             Icons.close_rounded,
-            color:
-                widget.selected ? AppColors.ACCENT_MAIN : AppColors.BLACK_54_WO,
+            color: widget.selected ? AppColors.WHITE_54 : AppColors.BLACK_54_WO,
             size: 16,
           ),
         ),

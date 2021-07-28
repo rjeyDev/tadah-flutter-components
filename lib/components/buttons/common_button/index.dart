@@ -347,7 +347,6 @@ class _CommonButtonState extends State<CommonButton> {
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,
                 onEnter: (event) {
-                  print('enter');
                   setState(() {
                     hovered = true;
                   });
@@ -358,7 +357,6 @@ class _CommonButtonState extends State<CommonButton> {
                 //   });
                 // },
                 onExit: (event) {
-                  print('exit');
                   setState(() {
                     hovered = false;
                   });
@@ -367,7 +365,6 @@ class _CommonButtonState extends State<CommonButton> {
                   onTap: widget.loading ? null : widget.onPressed,
                   onTapDown: (details) {
                     if (!disabled & !widget.loading) {
-                      print('down');
                       setState(() {
                         hovered = false;
                         pressed = true;
@@ -378,7 +375,6 @@ class _CommonButtonState extends State<CommonButton> {
                   },
                   onTapUp: (details) {
                     if (!disabled & !widget.loading) {
-                      print('up');
                       setState(() {
                         pressed = false;
                       });
@@ -386,7 +382,6 @@ class _CommonButtonState extends State<CommonButton> {
                   },
                   onTapCancel: () {
                     if (!disabled && !widget.loading) {
-                      print('cancel');
                       setState(() {
                         pressed = false;
                       });
