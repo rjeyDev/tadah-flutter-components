@@ -264,22 +264,22 @@ class _CommonButtonState extends State<CommonButton> {
     switch (widget.type) {
       case CommonButtonType.Outlined:
       case CommonButtonType.Contrast:
-        return hovered
-            ? AppColors.BLUE_VIOLET_500_8
+        return pressed
+            ? AppColors.BLUE_VIOLET_500_24
             : focused
                 ? AppColors.BLUE_VIOLET_500_16
-                : (pressed)
-                    ? AppColors.BLUE_VIOLET_500_24
+                : hovered
+                    ? AppColors.BLUE_VIOLET_500_8
                     : AppColors.TRANSPARENT;
         break;
       case CommonButtonType.Primary:
       default:
-        return hovered
-            ? AppColors.BLACK_8
+        return pressed
+            ? AppColors.BLACK_24
             : focused
                 ? AppColors.BLACK_16
-                : pressed
-                    ? AppColors.BLACK_24
+                : hovered
+                    ? AppColors.BLACK_8
                     : AppColors.TRANSPARENT;
     }
   }
@@ -300,7 +300,9 @@ class _CommonButtonState extends State<CommonButton> {
 
   List<BoxShadow> _shadow() {
     if (widget.loading || disabled) return [];
-    return widget.type == CommonButtonType.Primary && (focused || hovered)
+    return widget.type == CommonButtonType.Primary &&
+            !pressed &&
+            (focused || hovered)
         ? AppWidgetStyles.commonButtonShadow(context: context)
         : [];
   }
@@ -316,7 +318,7 @@ class _CommonButtonState extends State<CommonButton> {
             // button
             Positioned.fill(
               child: AnimatedContainer(
-                duration: Duration(milliseconds: 100),
+                duration: Duration(milliseconds: 50),
                 decoration: BoxDecoration(
                   color: _backgroundColor(context),
                   borderRadius:
@@ -362,11 +364,23 @@ class _CommonButtonState extends State<CommonButton> {
                   });
                 },
                 child: GestureDetector(
-                  onTap: widget.loading ? null : widget.onPressed,
+                  onTap: () {
+                    if (!widget.loading) {
+                      widget.onPressed();
+                      setState(() {
+                        pressed = true;
+                      });
+                      Future.delayed(Duration(milliseconds: 100), () {
+                        setState(() {
+                          pressed = false;
+                        });
+                      });
+                    }
+                  },
                   onTapDown: (details) {
                     if (!disabled & !widget.loading) {
                       setState(() {
-                        hovered = false;
+                        // hovered = false;
                         pressed = true;
                         FocusScope.of(context).requestFocus(FocusNode());
                         // pressed = true;
