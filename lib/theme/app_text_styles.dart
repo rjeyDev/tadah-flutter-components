@@ -28,7 +28,7 @@ class AppTextStyles {
   static const double secondaryFontSize = 16.0;
   static const double noteFontSize = 12.0;
 
-  static const double inputFontSize = 12.0;
+  static const double inputFontSize = 14.0;
 
   // CALC
   static const double header1HeightBasicCalc =

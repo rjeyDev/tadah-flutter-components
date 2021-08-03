@@ -1,7 +1,6 @@
 // @dart=2.9
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:tadah_flutter_components/tadah_flutter_components.dart';
 
 class AppChip extends StatefulWidget {
