@@ -57,7 +57,7 @@ class _AppCheckBoxState extends State<AppCheckBox> {
     return Checkbox(
       value: widget.value,
       onChanged: widget.onChanged,
-      focusNode: widget.focusNode,
+      focusNode: widget.focusNode ?? FocusNode(),
       autofocus: widget.autofocus,
       tristate: widget.tristate,
       mouseCursor: widget.mouseCursor,

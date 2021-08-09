@@ -257,7 +257,7 @@ class _LabelSwitchState extends State<LabelSwitch>
   @override
   Widget build(BuildContext context) {
     return Focus(
-      focusNode: widget.focusNode,
+      focusNode: widget.focusNode ?? FocusNode(),
       autofocus: widget.autoFocus,
       onFocusChange: (value) {
         setState(() {

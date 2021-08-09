@@ -47,7 +47,7 @@ class _AppChipState extends State<AppChip> {
       ),
       child: RawChip(
         isEnabled: widget.enabled,
-        focusNode: widget.focusNode,
+        focusNode: widget.focusNode ?? FocusNode(),
         autofocus: widget.autofocus,
         selected: widget.selected,
         avatar: widget.avatar,

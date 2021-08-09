@@ -47,7 +47,7 @@ class _TagState extends State<Tag> {
       ),
       child: RawChip(
         isEnabled: widget.enabled,
-        focusNode: widget.focusNode,
+        focusNode: widget.focusNode ?? FocusNode(),
         autofocus: widget.autofocus,
         selected: widget.selected,
         avatar: widget.avatar,

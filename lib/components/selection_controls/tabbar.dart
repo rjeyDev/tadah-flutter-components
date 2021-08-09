@@ -47,7 +47,7 @@ class _UnderlinedTabBarState extends State<UnderlinedTabBar> {
         hoverColor: AppColors.TRANSPARENT,
       ),
       child: Focus(
-        focusNode: widget.focusNode,
+        focusNode: widget.focusNode ?? FocusNode(),
         autofocus: widget.autofocus,
         onFocusChange: (focus) {
           setState(() {

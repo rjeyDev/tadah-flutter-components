@@ -83,7 +83,7 @@ class _RadioButtonState extends State<RadioButton> {
             }),
             splashRadius: widget.splashRadius,
             materialTapTargetSize: widget.materialTapTargetSize,
-            focusNode: widget.focusNode,
+            focusNode: widget.focusNode ?? FocusNode(),
             autofocus: widget.autofocus,
           )
         : MouseRegion(

@@ -50,7 +50,7 @@ class _AppSliderState extends State<AppSlider> {
         tickMarkShape: RoundSliderTickMarkShape(tickMarkRadius: 2),
       ),
       child: Slider(
-        focusNode: widget.focusNode,
+        focusNode: widget.focusNode ?? FocusNode(),
         autofocus: widget.autofocus,
         value: widget.value,
         onChanged: widget.onChanged,
