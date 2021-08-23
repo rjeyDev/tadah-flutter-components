@@ -2,6 +2,19 @@
 import 'package:flutter/material.dart';
 import 'package:tadah_flutter_components/tadah_flutter_components.dart';
 
+class DropdownItem {
+  final String title;
+  final Widget prefix;
+  final DropdownItemType type;
+  final Function(String) onTap;
+  DropdownItem({
+    this.title,
+    this.prefix,
+    this.type = DropdownItemType.classic,
+    this.onTap,
+  }) : assert(type != null);
+}
+
 class Dropdown extends StatefulWidget {
   final List<DropdownItem> children;
   final String value;
@@ -30,6 +43,9 @@ class Dropdown extends StatefulWidget {
 
   @override
   _DropdownState createState() => _DropdownState();
+
+  static _DropdownState of(BuildContext context) =>
+      context.findAncestorStateOfType<_DropdownState>();
 }
 
 class _DropdownState extends State<Dropdown>
@@ -43,10 +59,13 @@ class _DropdownState extends State<Dropdown>
   String prev = '';
   FocusNode _focusNode;
   bool get disabled => widget.onChanged == null;
+  bool multiselect;
+  List<int> selectedItems = [];
 
   @override
   void initState() {
     super.initState();
+    multiselect = widget.multiselect;
     _focusNode = widget.focusNode ?? FocusNode();
     controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 200));
@@ -54,7 +73,31 @@ class _DropdownState extends State<Dropdown>
     _overlayEntry = OverlayEntry(builder: (ctx) {
       return DropdownList(
         context,
-        children: widget.children,
+        children: widget.children
+            .map((item) => DropdownListChild(
+                  title: item.title,
+                  prefix: item.prefix,
+                  multiselect: widget.multiselect,
+                  onTap: (value) {
+                    int index = widget.children.indexOf(item);
+                    if (widget.multiselect) {
+                      print('hey');
+                      if (selectedItems.contains(index))
+                        selectedItems
+                            .removeWhere((element) => element == index);
+                      else
+                        selectedItems.add(index);
+                      widget.controller.text = '';
+                      selectedItems.forEach((element) {
+                        widget.controller.text +=
+                            widget.children[element].title + ',';
+                      });
+                    }
+                    if (widget.multiselect) item.onTap(value);
+                  },
+                  type: item.type,
+                ))
+            .toList(),
         layerLink: _layerLink,
       );
     });
@@ -179,10 +222,22 @@ class _DropdownState extends State<Dropdown>
                             : AppColors.BLACK_38_WO,
                       ),
                     ),
-                    prefixIcon: widget.prefix,
-                    // prefixIconConstraints: BoxConstraints(
-                    //   maxWidth: 40,
-                    // ),
+                    prefixIcon: widget.multiselect
+                        ? Wrap(
+                            clipBehavior: Clip.antiAlias,
+                            children: [
+                              if (widget.prefix != null)
+                                SizedBox(
+                                    height: 50,
+                                    width: 40,
+                                    child: widget.prefix),
+                            ],
+                          )
+                        : widget.prefix,
+                    prefixIconConstraints: BoxConstraints(
+                      minWidth: 16,
+                      maxHeight: 50,
+                    ),
                     labelText: widget.label,
                     hintText: widget.hint,
                   ),
@@ -193,42 +248,6 @@ class _DropdownState extends State<Dropdown>
         ),
       ),
     );
-
-    //   Focus(
-    //     focusNode: widget.focusNode,
-    //     child: GestureDetector(
-    //       onTap: () {
-    //         if (_focusNode.hasFocus)
-    //           _focusNode.unfocus();
-    //         else
-    //           _focusNode.requestFocus();
-    //       },
-    //       child: Container(
-    //         width: double.infinity,
-    //         padding: EdgeInsets.symmetric(horizontal: 12),
-    //         height: 50,
-    //         decoration: BoxDecoration(
-    //           color: AppColors.WHITE,
-    //           border: Border.all(color: AppColors.ACCENT_MAIN, width: 1.5),
-    //           borderRadius: BorderRadius.circular(8),
-    //         ),
-    //         child: Row(
-    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //           children: [
-    //             Container(),
-    //             RotationTransition(
-    //               turns: animation,
-    //               child: Icon(
-    //                 AppIcons.caret_down_mini,
-    //                 color: AppColors.ACCENT_MAIN,
-    //               ),
-    //             )
-    //           ],
-    //         ),
-    //       ),
-    //     ),
-    //   ),
-    // );
   }
 }
 
@@ -238,54 +257,75 @@ enum DropdownItemType {
   nested,
 }
 
-class DropdownItem extends StatefulWidget {
+class DropdownListChild extends StatefulWidget {
   final String title;
   final Widget prefix;
+  final bool multiselect;
   final DropdownItemType type;
   final Function(String) onTap;
-  final bool multiSelect;
 
-  const DropdownItem({
+  const DropdownListChild({
     Key key,
     this.onTap,
     this.title,
     this.prefix,
-    this.multiSelect = false,
+    this.multiselect = false,
     this.type = DropdownItemType.classic,
   })  : assert(title != null),
         super(key: key);
 
   @override
-  _DropdownItemState createState() => _DropdownItemState();
+  _DropdownListChildState createState() => _DropdownListChildState();
 }
 
-class _DropdownItemState extends State<DropdownItem> {
+class _DropdownListChildState extends State<DropdownListChild> {
   bool selected = false;
+  _DropdownState state;
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    state = Dropdown.of(context);
     return widget.type != DropdownItemType.label
         ? ListTile(
             onTap: () {
+              setState(() {
+                selected = !selected;
+              });
               widget.onTap(widget.title);
             },
-            leading: widget.prefix != null || widget.multiSelect
-                ? Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (widget.multiSelect)
-                        AppCheckBox(
-                            value: selected,
-                            onChanged: (value) {
-                              setState(() {
-                                selected = value;
-                              });
-                            }),
-                      if (widget.prefix != null) widget.prefix,
-                    ],
-                  )
-                : null,
-            title: Text(widget.title, style: TextStyle()),
+            contentPadding: EdgeInsets.only(
+                left: widget.type == DropdownItemType.classic &&
+                        widget.multiselect
+                    ? 8
+                    : widget.prefix != null
+                        ? 8
+                        : 16),
+            title: Row(
+              children: [
+                if (widget.multiselect &&
+                    widget.type == DropdownItemType.classic)
+                  AppCheckBox(
+                      value: selected,
+                      onChanged: (value) {
+                        setState(() {
+                          selected = value;
+                        });
+                      }),
+                if (widget.prefix != null)
+                  Padding(
+                    padding: widget.multiselect &&
+                            widget.type == DropdownItemType.classic
+                        ? EdgeInsets.only(right: 4)
+                        : const EdgeInsets.symmetric(horizontal: 4.0),
+                    child: widget.prefix,
+                  ),
+                Text(widget.title, style: TextStyle()),
+              ],
+            ),
             trailing: widget.type == DropdownItemType.nested
                 ? Icon(AppIcons.caret_right_mini, color: AppColors.BLACK_38_WO)
                 : null,
@@ -307,7 +347,7 @@ class _DropdownItemState extends State<DropdownItem> {
 }
 
 class DropdownList extends StatefulWidget {
-  final List<DropdownItem> children;
+  final List<DropdownListChild> children;
   final LayerLink layerLink;
   final BuildContext context;
   DropdownList(
@@ -342,7 +382,10 @@ class _DropdownListState extends State<DropdownList> {
             physics: ClampingScrollPhysics(),
             padding: EdgeInsets.symmetric(vertical: 8),
             shrinkWrap: true,
-            children: widget.children,
+            children: List.generate(
+              widget.children.length,
+              (index) => widget.children[index],
+            ),
           ),
         ),
       ),

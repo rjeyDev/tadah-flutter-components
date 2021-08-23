@@ -66,9 +66,6 @@ class _AppLinkState extends State<AppLink> {
       child: FittedBox(
         child: TouchableOpacity(
           activeOpacity: 1,
-          // ghostTouch: true,
-
-          // behavior: HitTestBehavior.opaque,
           onTap: () {
             if (widget.onPressed != null) {
               widget.onPressed();
