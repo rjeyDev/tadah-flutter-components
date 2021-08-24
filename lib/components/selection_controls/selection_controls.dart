@@ -7,3 +7,4 @@ export 'switch.dart';
 export 'tabbar.dart';
 export 'chip.dart';
 export 'tag.dart';
+export 'sliders.dart';

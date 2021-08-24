@@ -7,71 +7,53 @@ import 'package:tadah_flutter_components/theme/app_colors.dart';
 import 'package:tadah_flutter_components/theme/app_text_styles.dart';
 import 'package:tadah_flutter_components/theme/theme/src/theme.dart';
 
-class BasicTextInput extends StatefulWidget {
+class AppStepper extends StatefulWidget {
   static const double _cursorWidth = 1.2;
   static const double _cursorHeight = AppTextStyles.inputHeightBasicCalc;
   static const double _cursorRadius = _cursorWidth / 2;
 
-  const BasicTextInput({
+  const AppStepper({
     Key key,
-    @required this.controller,
-    this.hintText,
+    @required this.children,
+    this.initialValue,
     this.labelText,
     this.helpText,
-    this.fontSize,
-    this.color,
-    this.textInputType,
+    this.fontSize = 16,
     this.focusNode,
-    this.obscureText = false,
-    this.disabled = false,
     this.onChanged,
-    this.onSaved,
     this.validator,
-    this.prefix,
-    this.maxlines = 1,
-    this.minlines = 1,
-    this.maxLength,
-  })  : assert(obscureText != null),
-        assert(minlines <= maxlines),
-        super(key: key);
+  }) : super(key: key);
 
-  final TextEditingController controller;
-  final String hintText;
+  final List<String> children;
+  final String initialValue;
   final String labelText;
   final String helpText;
   final double fontSize;
-  final Color color;
-  final TextInputType textInputType;
   final FocusNode focusNode;
-  final bool obscureText;
-  final bool disabled;
-  final int maxlines;
-  final int minlines;
-  final int maxLength;
-  final Widget prefix;
+
   final ValueChanged<String> onChanged;
-  final ValueChanged<String> onSaved;
   final String Function(String) validator;
 
   @override
-  _BasicTextInputState createState() => _BasicTextInputState();
+  _AppStepperState createState() => _AppStepperState();
 }
 
-class _BasicTextInputState extends State<BasicTextInput> {
+class _AppStepperState extends State<AppStepper> {
   FocusNode _focusNode;
-
-  bool hide;
   bool hovered = false;
   bool get _isFocused => _focusNode.hasFocus;
+  TextEditingController controller = TextEditingController();
+  int index = 0;
+  bool get disabled => widget.onChanged == null;
 
   @override
   void initState() {
-    // widget.controller.addListener(() {
-    //   if (widget.controller.text.length < 2) {
-    //     setState(() {});
-    //   }
-    // });
-    hide = widget.obscureText;
+    if (widget.initialValue != null) {
+      controller.text = widget.initialValue;
+      index = widget.children.indexOf(widget.initialValue);
+    } else {
+      controller.text = widget.children.first;
+    }
     _focusNode = widget.focusNode ?? FocusNode();
     _focusNode.addListener(_focusListener);
     super.initState();
@@ -88,6 +70,20 @@ class _BasicTextInputState extends State<BasicTextInput> {
   }
 
   _focusListener() => setState(() {});
+
+  next() {
+    setState(() {
+      index++;
+      controller.text = widget.children[index];
+    });
+  }
+
+  prev() {
+    setState(() {
+      index--;
+      controller.text = widget.children[index];
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,85 +105,97 @@ class _BasicTextInputState extends State<BasicTextInput> {
           primary: AppColors.BLACK,
         )),
         child: TextFormField(
+          textAlign: TextAlign.center,
+          readOnly: true,
           onChanged: widget.onChanged,
-          onSaved: widget.onSaved,
+          controller: controller,
           validator: widget.validator,
-          enabled: !widget.disabled,
-          controller: widget.controller,
-          keyboardType: widget.textInputType,
+          enabled: !disabled,
           focusNode: _focusNode,
-          maxLength: widget.maxLength,
           maxLengthEnforcement: MaxLengthEnforcement.enforced,
-          cursorRadius: Radius.circular(BasicTextInput._cursorRadius),
-          cursorWidth: BasicTextInput._cursorWidth,
-          cursorHeight: BasicTextInput._cursorHeight,
+          cursorRadius: Radius.circular(AppStepper._cursorRadius),
+          cursorWidth: AppStepper._cursorWidth,
+          cursorHeight: AppStepper._cursorHeight,
           cursorColor: AppTheme.of(context).accentMain,
-          obscureText: hide,
           style: AppTextStyles.styleFrom(
-            context: context,
-            style: TextStyles.SECONDARY,
-            color: AppColors.TEXT_PRIMARY_LIGHT,
-            // height: 1.4,
-          ),
-          inputFormatters: [
-            LengthLimitingTextInputFormatter(widget.maxLength),
-          ],
+              context: context,
+              fontSize: widget.fontSize,
+              style: TextStyles.SECONDARY,
+              color: disabled
+                  ? AppColors.TEXT_DISABLED_LIGHT
+                  : AppColors.TEXT_PRIMARY_LIGHT,
+              height: 0),
           decoration: InputDecoration(
-            enabled: !widget.disabled,
+            enabled: !disabled,
+            isCollapsed: true,
             filled: false,
-            contentPadding: const EdgeInsets.fromLTRB(12, 18, 12, 18),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 18,
+            ),
             // isDense: true,
             helperText: widget.helpText,
-            suffixIconConstraints: BoxConstraints(
-              maxWidth: 20,
-              minWidth: 20,
+            prefixStyle: TextStyle(height: 1),
+            prefix: Container(
+              // color: Colors.red,
+              // width: 40,
+              // margin: EdgeInsets.only(top: 8),
+              child: ElevatedButton(
+                onPressed: index == 0
+                    ? null
+                    : () {
+                        prev();
+                      },
+                child: Icon(
+                  AppIcons.caret_left_mini,
+                  size: 20,
+                  color: index == 0 || disabled
+                      ? AppColors.BLACK_24_WO
+                      : AppColors.ACCENT_MAIN,
+                ),
+                style: ButtonStyle(
+                  minimumSize: MaterialStateProperty.all(Size(20, 20)),
+                  padding: MaterialStateProperty.all(EdgeInsets.zero),
+                  elevation: MaterialStateProperty.all(0),
+                  backgroundColor: MaterialStateProperty.resolveWith((states) {
+                    if (index == 0) return AppColors.TRANSPARENT;
+                    if (states.contains(MaterialState.hovered))
+                      return AppColors.BLUE_VIOLET_500_16_WO;
+                    return AppColors.TRANSPARENT;
+                  }),
+                  shape: MaterialStateProperty.all(CircleBorder()),
+                ),
+              ),
             ),
-            prefixIconConstraints: BoxConstraints(
-              maxWidth: 40,
-              minWidth: 40,
+            suffix: SizedBox(
+              child: ElevatedButton(
+                onPressed: index == widget.children.length - 1
+                    ? null
+                    : () {
+                        next();
+                      },
+                child: Icon(
+                  AppIcons.caret_right_mini,
+                  size: 20,
+                  color: index == widget.children.length - 1 || disabled
+                      ? AppColors.BLACK_24_WO
+                      : AppColors.ACCENT_MAIN,
+                ),
+                style: ButtonStyle(
+                  minimumSize: MaterialStateProperty.all(Size(20, 20)),
+                  padding: MaterialStateProperty.all(EdgeInsets.zero),
+                  elevation: MaterialStateProperty.all(0),
+                  backgroundColor: MaterialStateProperty.resolveWith((states) {
+                    if (index == widget.children.length - 1)
+                      return AppColors.TRANSPARENT;
+                    if (states.contains(MaterialState.hovered))
+                      return AppColors.BLUE_VIOLET_500_16_WO;
+                    return AppColors.TRANSPARENT;
+                  }),
+                  shape: MaterialStateProperty.all(CircleBorder()),
+                ),
+              ),
             ),
-            prefixIcon: widget.prefix != null
-                ? IconTheme(
-                    data: IconThemeData(
-                      color: _isFocused || widget.controller.text.length > 0
-                          ? AppColors.BLACK
-                          : AppColors.BLACK_38_WO,
-                      size: 20,
-                    ),
-                    child:
-                        SizedBox(width: 20, height: 20, child: widget.prefix))
-                : null,
-            suffix: widget.obscureText
-                ? IconButton(
-                    padding: EdgeInsets.zero,
-                    iconSize: 20,
-                    splashRadius: 10,
-                    constraints: BoxConstraints(maxWidth: 20, maxHeight: 20),
-                    onPressed: () {
-                      setState(() {
-                        hide = !hide;
-                      });
-                    },
-                    icon: hide ? Icon(AppIcons.eye_slash) : Icon(AppIcons.eye),
-                  )
-                : ElevatedButton(
-                    onPressed: () {
-                      widget.controller.clear();
-                    },
-                    child: Icon(
-                      AppIcons.x_mini,
-                      color: AppColors.ACCENT_MAIN,
-                    ),
-                    style: ButtonStyle(
-                      minimumSize: MaterialStateProperty.all(Size(20, 20)),
-                      padding:
-                          MaterialStateProperty.all(EdgeInsets.only(left: 0)),
-                      elevation: MaterialStateProperty.all(0),
-                      backgroundColor: MaterialStateProperty.all(
-                          AppColors.BLUE_VIOLET_500_16_WO),
-                      shape: MaterialStateProperty.all(CircleBorder()),
-                    ),
-                  ),
             counterStyle: AppTextStyles.styleFrom(
               context: context,
               style: TextStyles.NOTE,
@@ -224,7 +232,6 @@ class _BasicTextInputState extends State<BasicTextInput> {
                   BorderSide(color: AppColors.RED_PIGMENT_500, width: 1.5),
               borderRadius: BorderRadius.circular(8),
             ),
-            hintText: widget.hintText,
             labelText: widget.labelText,
             alignLabelWithHint: true,
             hintStyle: AppTextStyles.styleFrom(

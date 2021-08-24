@@ -19,7 +19,8 @@ class Dropdown extends StatefulWidget {
   final List<DropdownItem> children;
   final String value;
   final String label;
-  final String hint;
+  final String hintText;
+  final String helpText;
   final bool multiselect;
   final ValueChanged<String> onChanged;
   final TextEditingController controller;
@@ -36,7 +37,8 @@ class Dropdown extends StatefulWidget {
     this.children,
     this.prefix,
     this.label,
-    this.hint,
+    this.hintText,
+    this.helpText,
     this.multiselect = false,
     this.validator,
   }) : super(key: key);
@@ -239,7 +241,8 @@ class _DropdownState extends State<Dropdown>
                       maxHeight: 50,
                     ),
                     labelText: widget.label,
-                    hintText: widget.hint,
+                    hintText: widget.hintText,
+                    helperText: widget.helpText,
                   ),
                 ),
               ),
