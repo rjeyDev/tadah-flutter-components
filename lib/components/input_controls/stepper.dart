@@ -75,6 +75,7 @@ class _AppStepperState extends State<AppStepper> {
     setState(() {
       index++;
       controller.text = widget.children[index];
+      widget.onChanged(controller.text);
     });
   }
 
@@ -82,6 +83,7 @@ class _AppStepperState extends State<AppStepper> {
     setState(() {
       index--;
       controller.text = widget.children[index];
+      widget.onChanged(controller.text);
     });
   }
 
@@ -107,7 +109,6 @@ class _AppStepperState extends State<AppStepper> {
         child: TextFormField(
           textAlign: TextAlign.center,
           readOnly: true,
-          onChanged: widget.onChanged,
           controller: controller,
           validator: widget.validator,
           enabled: !disabled,
