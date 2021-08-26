@@ -375,10 +375,12 @@ class DropdownList extends StatefulWidget {
   final List<DropdownListChild> children;
   final LayerLink layerLink;
   final BuildContext context;
+  final double width;
   DropdownList(
     this.context, {
     @required this.children,
     this.layerLink,
+    this.width,
     Key key,
   }) : super(key: key);
 
@@ -393,7 +395,7 @@ class _DropdownListState extends State<DropdownList> {
     var size = renderBox.size;
 
     return Positioned(
-      width: size.width,
+      width: widget.width ?? size.width,
       child: CompositedTransformFollower(
         link: widget.layerLink,
         showWhenUnlinked: false,

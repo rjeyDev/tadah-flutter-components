@@ -7,6 +7,16 @@ import 'package:tadah_flutter_components/theme/app_colors.dart';
 import 'package:tadah_flutter_components/theme/app_text_styles.dart';
 import 'package:tadah_flutter_components/theme/theme/src/theme.dart';
 
+class CountryCode {
+  final Widget flagIcon;
+  final String countryCode;
+  final String mask;
+  CountryCode(
+      {@required this.flagIcon,
+      @required this.countryCode,
+      @required this.mask});
+}
+
 class PhoneBox extends StatefulWidget {
   static const double _cursorWidth = 1.2;
   static const double _cursorHeight = AppTextStyles.inputHeightBasicCalc;
@@ -14,39 +24,21 @@ class PhoneBox extends StatefulWidget {
 
   const PhoneBox({
     Key key,
-    @required this.controller,
-    this.hintText,
+    @required this.countries,
     this.labelText,
     this.helpText,
-    this.fontSize = 14,
-    this.textInputType,
+    this.fontSize = 16,
     this.focusNode,
-    this.obscureText = false,
-    this.disabled = false,
     this.onChanged,
     this.onSaved,
     this.validator,
-    this.prefix,
-    this.maxlines = 1,
-    this.minlines = 1,
-    this.maxLength,
-  })  : assert(obscureText != null),
-        assert(minlines <= maxlines),
-        super(key: key);
+  }) : super(key: key);
 
-  final TextEditingController controller;
-  final String hintText;
+  final List<CountryCode> countries;
   final String labelText;
   final String helpText;
   final double fontSize;
-  final TextInputType textInputType;
   final FocusNode focusNode;
-  final bool obscureText;
-  final bool disabled;
-  final int maxlines;
-  final int minlines;
-  final int maxLength;
-  final Widget prefix;
   final ValueChanged<String> onChanged;
   final ValueChanged<String> onSaved;
   final String Function(String) validator;
@@ -55,23 +47,58 @@ class PhoneBox extends StatefulWidget {
   _PhoneBoxState createState() => _PhoneBoxState();
 }
 
-class _PhoneBoxState extends State<PhoneBox> {
+class _PhoneBoxState extends State<PhoneBox>
+    with SingleTickerProviderStateMixin {
   FocusNode _focusNode;
-  TextEditingController textController = TextEditingController();
-  bool hide;
+  Animation<double> animation;
+  AnimationController controller;
+  MaskedTextController textController;
   bool hovered = false;
+  bool get disabled => widget.onChanged == null;
   bool get _isFocused => _focusNode.hasFocus;
+  CountryCode selectedCountry;
+  OverlayEntry _overlayEntry;
+
+  final LayerLink _layerLink = LayerLink();
 
   @override
   void initState() {
-    // widget.controller.addListener(() {
-    //   if (widget.controller.text.length < 2) {
-    //     setState(() {});
-    //   }
-    // });
-    hide = widget.obscureText;
+    selectedCountry = widget.countries.first;
+    textController = MaskedTextController(mask: selectedCountry.mask);
+    _overlayEntry = OverlayEntry(builder: (ctx) {
+      return DropdownList(
+        context,
+        width: 95,
+        children: widget.countries.map((item) {
+          return DropdownListChild(
+            title: item.countryCode,
+            prefix: Container(
+              width: 20,
+              height: 20,
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(100),
+                  child: item.flagIcon),
+            ),
+            onTap: (value) {
+              _overlayEntry.remove();
+              controller.reverse();
+              setState(() {
+                selectedCountry = widget.countries
+                    .firstWhere((element) => element.countryCode == value);
+                textController =
+                    MaskedTextController(mask: selectedCountry.mask);
+              });
+            },
+          );
+        }).toList(),
+        layerLink: _layerLink,
+      );
+    });
     _focusNode = widget.focusNode ?? FocusNode();
     _focusNode.addListener(_focusListener);
+    controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+    animation = Tween<double>(begin: 0, end: 0.5).animate(controller);
     super.initState();
   }
 
@@ -85,193 +112,198 @@ class _PhoneBoxState extends State<PhoneBox> {
     super.dispose();
   }
 
-  _focusListener() => setState(() {});
+  toggleOverlay() {
+    if (_overlayEntry.mounted) {
+      _overlayEntry.remove();
+      controller.reverse();
+    } else {
+      Overlay.of(context).insert(_overlayEntry);
+      controller.forward();
+    }
+  }
+
+  _focusListener() => setState(() {
+        if (!_focusNode.hasFocus && _overlayEntry.mounted) {
+          _overlayEntry.remove();
+          controller.reverse();
+        }
+      });
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.text,
-      onEnter: (event) {
-        setState(() {
-          hovered = true;
-        });
-      },
-      onExit: (event) {
-        setState(() {
-          hovered = false;
-        });
-      },
-      child: Theme(
-        data: ThemeData(
-            colorScheme: ColorScheme.light(
-          primary: AppColors.BLACK,
-        )),
-        child: TextFormField(
-          onChanged: widget.onChanged,
-          onSaved: widget.onSaved,
-          validator: widget.validator,
-          enabled: !widget.disabled,
-          controller: widget.controller,
-          keyboardType: widget.textInputType,
-          focusNode: _focusNode,
-          maxLength: widget.maxLength,
-          maxLengthEnforcement: MaxLengthEnforcement.enforced,
-          cursorRadius: Radius.circular(PhoneBox._cursorRadius),
-          cursorWidth: PhoneBox._cursorWidth,
-          cursorHeight: PhoneBox._cursorHeight,
-          cursorColor: AppTheme.of(context).accentMain,
-          obscureText: hide,
-          style: AppTextStyles.styleFrom(
-            context: context,
-            fontSize: widget.fontSize,
-            style: TextStyles.SECONDARY,
-            color: AppColors.TEXT_PRIMARY_LIGHT,
-            // height: 1.4,
-          ),
-          inputFormatters: [
-            LengthLimitingTextInputFormatter(widget.maxLength),
-          ],
-          decoration: InputDecoration(
-            enabled: !widget.disabled,
-            filled: false,
-            contentPadding: const EdgeInsets.fromLTRB(12, 18, 12, 18),
-            // isDense: true,
-            helperText: widget.helpText,
-            suffixIconConstraints: BoxConstraints(
-              maxWidth: 20,
-              minWidth: 20,
+    return CompositedTransformTarget(
+      link: _layerLink,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.text,
+        onEnter: (event) {
+          setState(() {
+            hovered = true;
+          });
+        },
+        onExit: (event) {
+          setState(() {
+            hovered = false;
+          });
+        },
+        child: Theme(
+          data: ThemeData(
+              colorScheme: ColorScheme.light(
+            primary: AppColors.BLACK,
+          )),
+          child: TextFormField(
+            onChanged: widget.onChanged,
+            onSaved: widget.onSaved,
+            validator: widget.validator,
+            enabled: !disabled,
+            controller: textController,
+            keyboardType: TextInputType.phone,
+            focusNode: _focusNode,
+            maxLengthEnforcement: MaxLengthEnforcement.enforced,
+            cursorRadius: Radius.circular(PhoneBox._cursorRadius),
+            cursorWidth: PhoneBox._cursorWidth,
+            cursorHeight: PhoneBox._cursorHeight,
+            cursorColor: AppTheme.of(context).accentMain,
+            style: AppTextStyles.styleFrom(
+              context: context,
+              fontSize: widget.fontSize,
+              style: TextStyles.SECONDARY,
+              color: AppColors.TEXT_PRIMARY_LIGHT,
+              // height: 1.4,
             ),
-            prefixIconConstraints: BoxConstraints(
-              maxWidth: 40,
-              minWidth: 40,
-            ),
-            prefixIcon: SizedBox(
-              width: 70,
-              child: Dropdown(
-                controller: textController,
-                focusNode: _focusNode,
-                label: 'Style',
-                hintText: 'Select style',
-                multiselect: true,
-                onChanged:
-                    // null,
-                    (value) {},
-                // value: 'Weight',
-                // prefix: Icon(AppIcons.search),
-                children: [
-                  DropdownItem(title: 'Style', type: DropdownItemType.label),
-                  DropdownItem(
-                    onTap: (value) {
-                      textController.text = value;
-                    },
-                    // selected: true,
-                    title: 'Align right',
-                  ),
-                  DropdownItem(
-                    onTap: (value) {
-                      textController.text = value;
-                    },
-                    prefix: Icon(AppIcons.apple),
-                    title: 'Align left',
-                    // type: DropdownItemType.nested,
-                  ),
-                  DropdownItem(
-                    onTap: (value) {},
-                    title: 'Colors',
-                    type: DropdownItemType.nested,
-                  ),
-                ],
+            inputFormatters: [
+              LengthLimitingTextInputFormatter(20),
+            ],
+            decoration: InputDecoration(
+              enabled: !disabled,
+              filled: false,
+              contentPadding: const EdgeInsets.fromLTRB(12, 18, 12, 18),
+              // isDense: true,
+              helperText: widget.helpText,
+              suffixIconConstraints: BoxConstraints(
+                maxWidth: 20,
+                minWidth: 20,
               ),
-            ),
-            suffix: widget.obscureText
-                ? IconButton(
-                    padding: EdgeInsets.zero,
-                    iconSize: 20,
-                    splashRadius: 10,
-                    constraints: BoxConstraints(maxWidth: 20, maxHeight: 20),
-                    onPressed: () {
-                      setState(() {
-                        hide = !hide;
-                      });
-                    },
-                    icon: hide ? Icon(AppIcons.eye_slash) : Icon(AppIcons.eye),
-                  )
-                : ElevatedButton(
-                    onPressed: () {
-                      widget.controller.clear();
-                    },
-                    child: Icon(
-                      AppIcons.x_mini,
-                      color: AppColors.ACCENT_MAIN,
-                    ),
-                    style: ButtonStyle(
-                      minimumSize: MaterialStateProperty.all(Size(20, 20)),
-                      padding:
-                          MaterialStateProperty.all(EdgeInsets.only(left: 0)),
-                      elevation: MaterialStateProperty.all(0),
-                      backgroundColor: MaterialStateProperty.all(
-                          AppColors.BLUE_VIOLET_500_16_WO),
-                      shape: MaterialStateProperty.all(CircleBorder()),
-                    ),
+              prefixIconConstraints: BoxConstraints(
+                maxWidth: 75,
+                minWidth: 40,
+              ),
+              prefixStyle: TextStyle(fontSize: 16),
+              prefixText: selectedCountry.countryCode + ' ',
+              prefixIcon: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: GestureDetector(
+                  onTap: () {
+                    toggleOverlay();
+                  },
+                  child: Row(
+                    children: [
+                      SizedBox(width: 12),
+                      Container(
+                          width: 20,
+                          height: 20,
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(100),
+                              child: selectedCountry.flagIcon)),
+                      SizedBox(width: 4),
+                      RotationTransition(
+                        turns: animation,
+                        child: Icon(
+                          AppIcons.caret_down_mini,
+                          color: _focusNode.hasFocus
+                              ? AppColors.ACCENT_MAIN
+                              : AppColors.BLACK_38_WO,
+                        ),
+                      ),
+                      SizedBox(width: 4),
+                      Container(
+                        width: 1,
+                        height: 24,
+                        color: AppColors.BLACK_8_WO,
+                      ),
+                    ],
                   ),
-            counterStyle: AppTextStyles.styleFrom(
-              context: context,
-              style: TextStyles.NOTE,
-              color: AppColors.BLACK_38_WO,
-            ),
-            // counterText: '${widget.controller.text.length}/${widget.maxLength}',
-            border: OutlineInputBorder(
-              borderSide: BorderSide(
-                  color: hovered ? AppColors.BLACK_38_WO : AppColors.BLACK_8_WO,
-                  width: 1.5),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                  color: hovered ? AppColors.BLACK_38_WO : AppColors.BLACK_8_WO,
-                  width: 1.5),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: AppColors.RED_PIGMENT_500, width: 1.5),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.ACCENT_MAIN, width: 1.5),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            disabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.BLACK_8_WO, width: 1.5),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: AppColors.RED_PIGMENT_500, width: 1.5),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            hintText: widget.hintText,
-            labelText: widget.labelText,
-            alignLabelWithHint: true,
-            hintStyle: AppTextStyles.styleFrom(
-              context: context,
-              style: TextStyles.SECONDARY,
-              color: AppColors.BLACK_38_WO,
-            ),
-            helperStyle: AppTextStyles.styleFrom(
-              context: context,
-              style: TextStyles.NOTE,
-              color: AppColors.BLACK_38_WO,
-            ),
-            errorStyle: AppTextStyles.styleFrom(
-              context: context,
-              style: TextStyles.NOTE,
-              color: AppColors.RED_PIGMENT_500,
-            ),
-            labelStyle: AppTextStyles.styleFrom(
-              context: context,
-              style: TextStyles.SECONDARY,
-              color: _isFocused ? AppColors.ACCENT_MAIN : AppColors.BLACK_38_WO,
+                ),
+              ),
+              suffix: ElevatedButton(
+                onPressed: () {
+                  textController.clear();
+                },
+                child: Icon(
+                  AppIcons.x_mini,
+                  color: AppColors.ACCENT_MAIN,
+                ),
+                style: ButtonStyle(
+                  minimumSize: MaterialStateProperty.all(Size(20, 20)),
+                  padding: MaterialStateProperty.all(EdgeInsets.only(left: 0)),
+                  elevation: MaterialStateProperty.all(0),
+                  backgroundColor: MaterialStateProperty.all(
+                      AppColors.BLUE_VIOLET_500_16_WO),
+                  shape: MaterialStateProperty.all(CircleBorder()),
+                ),
+              ),
+              counterStyle: AppTextStyles.styleFrom(
+                context: context,
+                style: TextStyles.NOTE,
+                color: AppColors.BLACK_38_WO,
+              ),
+              // counterText: '${widget.controller.text.length}/${widget.maxLength}',
+              border: OutlineInputBorder(
+                borderSide: BorderSide(
+                    color:
+                        hovered ? AppColors.BLACK_38_WO : AppColors.BLACK_8_WO,
+                    width: 1.5),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                    color:
+                        hovered ? AppColors.BLACK_38_WO : AppColors.BLACK_8_WO,
+                    width: 1.5),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderSide:
+                    BorderSide(color: AppColors.RED_PIGMENT_500, width: 1.5),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide:
+                    BorderSide(color: AppColors.ACCENT_MAIN, width: 1.5),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: AppColors.BLACK_8_WO, width: 1.5),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderSide:
+                    BorderSide(color: AppColors.RED_PIGMENT_500, width: 1.5),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              hintText: selectedCountry.mask,
+              labelText: widget.labelText,
+              alignLabelWithHint: true,
+              hintStyle: AppTextStyles.styleFrom(
+                context: context,
+                style: TextStyles.SECONDARY,
+                color: AppColors.BLACK_38_WO,
+              ),
+              helperStyle: AppTextStyles.styleFrom(
+                context: context,
+                style: TextStyles.NOTE,
+                color: AppColors.BLACK_38_WO,
+              ),
+              errorStyle: AppTextStyles.styleFrom(
+                context: context,
+                style: TextStyles.NOTE,
+                color: AppColors.RED_PIGMENT_500,
+              ),
+              labelStyle: AppTextStyles.styleFrom(
+                context: context,
+                style: TextStyles.SECONDARY,
+                color:
+                    _isFocused ? AppColors.ACCENT_MAIN : AppColors.BLACK_38_WO,
+              ),
             ),
           ),
         ),

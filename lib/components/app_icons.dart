@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class AppIcons {
@@ -100,7 +101,7 @@ class AppIcons {
       IconData(0xe82f, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData paperclip =
       IconData(0xe830, fontFamily: _kFontFam, fontPackage: _kFontPkg);
-  static const IconData pin_fill =
+  static const IconData pinfill =
       IconData(0xe831, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData pin =
       IconData(0xe832, fontFamily: _kFontFam, fontPackage: _kFontPkg);
@@ -159,7 +160,14 @@ class AppIcons {
 
   static Widget preloader = custom(Preloader());
 
-  static CustomPaint custom(CustomPainter painter, {width = 24, height = 24}) =>
+  static Widget franceFlag = custom(FranceFlag());
+  static Widget philippinesFlag = custom(PhilippinesFlag());
+  static Widget russiaFlag = custom(RussiaFlag());
+  static Widget spainFlag = custom(SpainFlag());
+  static Widget ukFlag = custom(UKFlag());
+
+  static CustomPaint custom(CustomPainter painter,
+          {width = 24.0, height = 24.0}) =>
       CustomPaint(size: Size(width, height), painter: painter);
 }
 
@@ -350,6 +358,358 @@ class Preloader extends CustomPainter {
             width: size.width * 0.3333333,
             height: size.height * 0.3333333),
         paint3Fill);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
+}
+
+class FranceFlag extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint0fill = Paint()..style = PaintingStyle.fill;
+    paint0fill.color = Color(0xffF5F8FB).withOpacity(1.0);
+    canvas.drawRect(
+        Rect.fromLTWH(
+            size.width * -0.1666667, 0, size.width * 1.333333, size.height),
+        paint0fill);
+
+    Paint paint1fill = Paint()..style = PaintingStyle.fill;
+    paint1fill.color = Color(0xff41479B).withOpacity(1.0);
+    canvas.drawRect(
+        Rect.fromLTWH(
+            size.width * -0.1666667, 0, size.width * 0.4166667, size.height),
+        paint1fill);
+
+    Paint paint2fill = Paint()..style = PaintingStyle.fill;
+    paint2fill.color = Color(0xffE51D1D).withOpacity(1.0);
+    canvas.drawRect(
+        Rect.fromLTWH(
+            size.width * 0.7500000, 0, size.width * 0.4166667, size.height),
+        paint2fill);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
+}
+
+class PhilippinesFlag extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint0fill = Paint()..style = PaintingStyle.fill;
+    paint0fill.color = Color(0xff41479B).withOpacity(1.0);
+    canvas.drawRect(
+        Rect.fromLTWH(0, 0, size.width * 1.333333, size.height * 0.5000000),
+        paint0fill);
+
+    Paint paint1fill = Paint()..style = PaintingStyle.fill;
+    paint1fill.color = Color(0xffDC251C).withOpacity(1.0);
+    canvas.drawRect(
+        Rect.fromLTWH(0, size.height * 0.5000000, size.width * 1.333333,
+            size.height * 0.5000000),
+        paint1fill);
+
+    Path path_2 = Path();
+    path_2.moveTo(size.width * 0.6666667, size.height * 0.5000000);
+    path_2.lineTo(0, 0);
+    path_2.lineTo(0, size.height);
+    path_2.lineTo(size.width * 0.6666667, size.height * 0.5000000);
+    path_2.close();
+
+    Paint paint2fill = Paint()..style = PaintingStyle.fill;
+    paint2fill.color = Color(0xffF5F8FB).withOpacity(1.0);
+    canvas.drawPath(path_2, paint2fill);
+
+    Paint paint3fill = Paint()..style = PaintingStyle.fill;
+    paint3fill.color = Color(0xffFFD018).withOpacity(1.0);
+    canvas.drawOval(
+        Rect.fromCenter(
+            center: Offset(size.width * 0.1250000, size.height * 0.2083333),
+            width: size.width * 0.08333333,
+            height: size.height * 0.08333333),
+        paint3fill);
+
+    Paint paint4fill = Paint()..style = PaintingStyle.fill;
+    paint4fill.color = Color(0xffFFD018).withOpacity(1.0);
+    canvas.drawOval(
+        Rect.fromCenter(
+            center: Offset(size.width * 0.1250000, size.height * 0.7916667),
+            width: size.width * 0.08333333,
+            height: size.height * 0.08333317),
+        paint4fill);
+
+    Paint paint5fill = Paint()..style = PaintingStyle.fill;
+    paint5fill.color = Color(0xffFFD018).withOpacity(1.0);
+    canvas.drawCircle(Offset(size.width * 0.5416667, size.height * 0.5000000),
+        size.width * 0.04166667, paint5fill);
+
+    Path path_6 = Path();
+    path_6.moveTo(size.width * 0.2500000, size.height * 0.3333333);
+    path_6.lineTo(size.width * 0.2743621, size.height * 0.4411833);
+    path_6.lineTo(size.width * 0.3678513, size.height * 0.3821487);
+    path_6.lineTo(size.width * 0.3088150, size.height * 0.4756375);
+    path_6.lineTo(size.width * 0.4166667, size.height * 0.5000000);
+    path_6.lineTo(size.width * 0.3088150, size.height * 0.5243625);
+    path_6.lineTo(size.width * 0.3678513, size.height * 0.6178500);
+    path_6.lineTo(size.width * 0.2743621, size.height * 0.5588167);
+    path_6.lineTo(size.width * 0.2500000, size.height * 0.6666667);
+    path_6.lineTo(size.width * 0.2256379, size.height * 0.5588167);
+    path_6.lineTo(size.width * 0.1321488, size.height * 0.6178500);
+    path_6.lineTo(size.width * 0.1911850, size.height * 0.5243625);
+    path_6.lineTo(size.width * 0.08333333, size.height * 0.5000000);
+    path_6.lineTo(size.width * 0.1911850, size.height * 0.4756375);
+    path_6.lineTo(size.width * 0.1321488, size.height * 0.3821487);
+    path_6.lineTo(size.width * 0.2256379, size.height * 0.4411833);
+    path_6.lineTo(size.width * 0.2500000, size.height * 0.3333333);
+    path_6.close();
+
+    Paint paint6fill = Paint()..style = PaintingStyle.fill;
+    paint6fill.color = Color(0xffFFD018).withOpacity(1.0);
+    canvas.drawPath(path_6, paint6fill);
+
+    Paint paint7fill = Paint()..style = PaintingStyle.fill;
+    paint7fill.color = Color(0xffFFD018).withOpacity(1.0);
+    canvas.drawOval(
+        Rect.fromCenter(
+            center: Offset(size.width * 0.2500000, size.height * 0.5000000),
+            width: size.width * 0.1666667,
+            height: size.height * 0.1666667),
+        paint7fill);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
+}
+
+class RussiaFlag extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint0fill = Paint()..style = PaintingStyle.fill;
+    paint0fill.color = Color(0xffF5F8FB).withOpacity(1.0);
+    canvas.drawRect(
+        Rect.fromLTWH(size.width * -0.1666667, 0, size.width * 1.333333,
+            size.height * 0.3333333),
+        paint0fill);
+
+    Paint paint1fill = Paint()..style = PaintingStyle.fill;
+    paint1fill.color = Color(0xff41479B).withOpacity(1.0);
+    canvas.drawRect(
+        Rect.fromLTWH(size.width * -0.1666667, size.height * 0.3333333,
+            size.width * 1.333333, size.height * 0.3333333),
+        paint1fill);
+
+    Paint paint2fill = Paint()..style = PaintingStyle.fill;
+    paint2fill.color = Color(0xffDC251C).withOpacity(1.0);
+    canvas.drawRect(
+        Rect.fromLTWH(size.width * -0.1666667, size.height * 0.6666667,
+            size.width * 1.333333, size.height * 0.3333333),
+        paint2fill);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
+}
+
+class SpainFlag extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint0fill = Paint()..style = PaintingStyle.fill;
+    paint0fill.color = Color(0xffFFD018).withOpacity(1.0);
+    canvas.drawRect(
+        Rect.fromLTWH(0, 0, size.width * 1.333333, size.height), paint0fill);
+
+    Paint paint1fill = Paint()..style = PaintingStyle.fill;
+    paint1fill.color = Color(0xffDC251C).withOpacity(1.0);
+    canvas.drawRect(
+        Rect.fromLTWH(size.width * -0.1666667, 0, size.width * 1.333333,
+            size.height * 0.2500000),
+        paint1fill);
+
+    Paint paint2fill = Paint()..style = PaintingStyle.fill;
+    paint2fill.color = Color(0xffDC251C).withOpacity(1.0);
+    canvas.drawRect(
+        Rect.fromLTWH(size.width * -0.1666667, size.height * 0.7500000,
+            size.width * 1.333333, size.height * 0.2500000),
+        paint2fill);
+
+    Paint paint3fill = Paint()..style = PaintingStyle.fill;
+    paint3fill.color = Color(0xffDC251C).withOpacity(1.0);
+    canvas.drawRect(
+        Rect.fromLTWH(size.width * 0.08333333, size.height * 0.3333333,
+            size.width * 0.1666667, size.height * 0.1666667),
+        paint3fill);
+
+    Path path_4 = Path();
+    path_4.moveTo(size.width * 0.08333333, size.height * 0.5000000);
+    path_4.lineTo(size.width * 0.2500000, size.height * 0.5000000);
+    path_4.lineTo(size.width * 0.2500000, size.height * 0.6666667);
+    path_4.lineTo(size.width * 0.1250000, size.height * 0.6666667);
+    path_4.cubicTo(
+        size.width * 0.1019883,
+        size.height * 0.6666667,
+        size.width * 0.08333333,
+        size.height * 0.6480125,
+        size.width * 0.08333333,
+        size.height * 0.6250000);
+    path_4.lineTo(size.width * 0.08333333, size.height * 0.5000000);
+    path_4.close();
+
+    Paint paint4fill = Paint()..style = PaintingStyle.fill;
+    paint4fill.color = Color(0xffFF8718).withOpacity(1.0);
+    canvas.drawPath(path_4, paint4fill);
+
+    Path path_5 = Path();
+    path_5.moveTo(size.width * 0.2500000, size.height * 0.5000000);
+    path_5.lineTo(size.width * 0.4166667, size.height * 0.5000000);
+    path_5.lineTo(size.width * 0.4166667, size.height * 0.6250000);
+    path_5.cubicTo(
+        size.width * 0.4166667,
+        size.height * 0.6480125,
+        size.width * 0.3980117,
+        size.height * 0.6666667,
+        size.width * 0.3750000,
+        size.height * 0.6666667);
+    path_5.lineTo(size.width * 0.2500000, size.height * 0.6666667);
+    path_5.lineTo(size.width * 0.2500000, size.height * 0.5000000);
+    path_5.close();
+
+    Paint paint5fill = Paint()..style = PaintingStyle.fill;
+    paint5fill.color = Color(0xffDC251C).withOpacity(1.0);
+    canvas.drawPath(path_5, paint5fill);
+
+    Paint paint6fill = Paint()..style = PaintingStyle.fill;
+    paint6fill.color = Color(0xffA6A6A6).withOpacity(1.0);
+    canvas.drawRect(
+        Rect.fromLTWH(size.width * 0.2500000, size.height * 0.3333333,
+            size.width * 0.1666667, size.height * 0.1666667),
+        paint6fill);
+
+    Paint paint7fill = Paint()..style = PaintingStyle.fill;
+    paint7fill.color = Color(0xff41479B).withOpacity(1.0);
+    canvas.drawOval(
+        Rect.fromCenter(
+            center: Offset(size.width * 0.2500000, size.height * 0.5000000),
+            width: size.width * 0.08333333,
+            height: size.height * 0.08333333),
+        paint7fill);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
+}
+
+class UKFlag extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    Path path_0 = Path();
+    path_0.moveTo(size.width * -0.2083333, 0);
+    path_0.lineTo(size.width * 1.208333, 0);
+    path_0.lineTo(size.width * 1.208333, size.height);
+    path_0.lineTo(size.width * -0.2083333, size.height);
+    path_0.lineTo(size.width * -0.2083333, 0);
+    path_0.close();
+
+    Paint paint0fill = Paint()..style = PaintingStyle.fill;
+    paint0fill.color = Color(0xff41479B).withOpacity(1.0);
+    canvas.drawPath(path_0, paint0fill);
+
+    Path path_1 = Path();
+    path_1.moveTo(size.width * 1.208333, size.height * 0.8697917);
+    path_1.lineTo(size.width * 0.6844625, size.height * 0.5000000);
+    path_1.lineTo(size.width * 1.208333, size.height * 0.1302088);
+    path_1.lineTo(size.width * 1.208333, 0);
+    path_1.lineTo(size.width * 1.023871, 0);
+    path_1.lineTo(size.width * 0.5000000, size.height * 0.3697925);
+    path_1.lineTo(size.width * -0.02387162, 0);
+    path_1.lineTo(size.width * -0.2083333, 0);
+    path_1.lineTo(size.width * -0.2083333, size.height * 0.1302083);
+    path_1.lineTo(size.width * 0.3155388, size.height * 0.5000000);
+    path_1.lineTo(size.width * -0.2083333, size.height * 0.8697917);
+    path_1.lineTo(size.width * -0.2083333, size.height);
+    path_1.lineTo(size.width * -0.02386904, size.height);
+    path_1.lineTo(size.width * 0.5000000, size.height * 0.6302083);
+    path_1.lineTo(size.width * 1.023871, size.height);
+    path_1.lineTo(size.width * 1.208333, size.height);
+    path_1.lineTo(size.width * 1.208333, size.height * 0.8697917);
+    path_1.close();
+
+    Paint paint1fill = Paint()..style = PaintingStyle.fill;
+    paint1fill.color = Colors.white.withOpacity(1.0);
+    canvas.drawPath(path_1, paint1fill);
+
+    Path path_2 = Path();
+    path_2.moveTo(size.width * -0.2083333, size.height * 0.05208208);
+    path_2.lineTo(size.width * -0.2083333, 0);
+    path_2.lineTo(size.width * -0.1345467, 0);
+    path_2.lineTo(size.width * 0.5000000, size.height * 0.4479167);
+    path_2.lineTo(size.width * 1.134546, 0);
+    path_2.lineTo(size.width * 1.208333, 0);
+    path_2.lineTo(size.width * 1.208333, size.height * 0.05208292);
+    path_2.lineTo(size.width * 0.5737833, size.height * 0.5000000);
+    path_2.lineTo(size.width * 1.208333, size.height * 0.9479167);
+    path_2.lineTo(size.width * 1.208333, size.height);
+    path_2.lineTo(size.width * 1.134550, size.height);
+    path_2.lineTo(size.width * 0.5000000, size.height * 0.5520833);
+    path_2.lineTo(size.width * -0.1345471, size.height);
+    path_2.lineTo(size.width * -0.2083333, size.height);
+    path_2.lineTo(size.width * -0.2083333, size.height * 0.9479167);
+    path_2.lineTo(size.width * 0.4262167, size.height * 0.5000000);
+    path_2.lineTo(size.width * -0.2083333, size.height * 0.05208208);
+    path_2.close();
+
+    Paint paint2fill = Paint()..style = PaintingStyle.fill;
+    paint2fill.color = Color(0xffDC251C).withOpacity(1.0);
+    canvas.drawPath(path_2, paint2fill);
+
+    Path path_3 = Path();
+    path_3.moveTo(size.width * 0.3229167, size.height * 0.3333333);
+    path_3.lineTo(size.width * 0.3229167, 0);
+    path_3.lineTo(size.width * 0.6770833, 0);
+    path_3.lineTo(size.width * 0.6770833, size.height * 0.3333333);
+    path_3.lineTo(size.width * 1.208333, size.height * 0.3333333);
+    path_3.lineTo(size.width * 1.208333, size.height * 0.6666667);
+    path_3.lineTo(size.width * 0.6770833, size.height * 0.6666667);
+    path_3.lineTo(size.width * 0.6770833, size.height);
+    path_3.lineTo(size.width * 0.3229167, size.height);
+    path_3.lineTo(size.width * 0.3229167, size.height * 0.6666667);
+    path_3.lineTo(size.width * -0.2083333, size.height * 0.6666667);
+    path_3.lineTo(size.width * -0.2083333, size.height * 0.3333333);
+    path_3.lineTo(size.width * 0.3229167, size.height * 0.3333333);
+    path_3.close();
+
+    Paint paint3fill = Paint()..style = PaintingStyle.fill;
+    paint3fill.color = Colors.white.withOpacity(1.0);
+    canvas.drawPath(path_3, paint3fill);
+
+    Path path_4 = Path();
+    path_4.moveTo(size.width * 0.4114583, size.height * 0.4166667);
+    path_4.lineTo(size.width * 0.4114583, 0);
+    path_4.lineTo(size.width * 0.5885417, 0);
+    path_4.lineTo(size.width * 0.5885417, size.height * 0.4166667);
+    path_4.lineTo(size.width * 1.208333, size.height * 0.4166667);
+    path_4.lineTo(size.width * 1.208333, size.height * 0.5833333);
+    path_4.lineTo(size.width * 0.5885417, size.height * 0.5833333);
+    path_4.lineTo(size.width * 0.5885417, size.height);
+    path_4.lineTo(size.width * 0.4114583, size.height);
+    path_4.lineTo(size.width * 0.4114583, size.height * 0.5833333);
+    path_4.lineTo(size.width * -0.2083333, size.height * 0.5833333);
+    path_4.lineTo(size.width * -0.2083333, size.height * 0.4166667);
+    path_4.lineTo(size.width * 0.4114583, size.height * 0.4166667);
+    path_4.close();
+
+    Paint paint4fill = Paint()..style = PaintingStyle.fill;
+    paint4fill.color = Color(0xffDC251C).withOpacity(1.0);
+    canvas.drawPath(path_4, paint4fill);
   }
 
   @override
