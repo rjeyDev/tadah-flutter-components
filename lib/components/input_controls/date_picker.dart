@@ -56,22 +56,7 @@ class _DropdownState extends State<DatePicker>
       builder: (ctx) {
         RenderBox renderBox = context.findRenderObject();
         var size = renderBox.size;
-        return Positioned(
-          width: 290,
-          height: 306,
-          child: CompositedTransformFollower(
-            link: _layerLink,
-            showWhenUnlinked: false,
-            offset: Offset(0.0, size.height + 8.0),
-            child: Material(
-              color: AppColors.WHITE,
-              elevation: 3,
-              shadowColor: AppColors.SHADOW_24_LIGHT,
-              borderRadius: BorderRadius.circular(8),
-              child: Container(),
-            ),
-          ),
-        );
+        return Calendar(layerLink: _layerLink, size: size);
       },
     );
 
@@ -198,6 +183,318 @@ class _DropdownState extends State<DatePicker>
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class Calendar extends StatefulWidget {
+  final LayerLink layerLink;
+  final Size size;
+  Calendar({this.size, this.layerLink, Key key}) : super(key: key);
+
+  @override
+  _CalendarState createState() => _CalendarState();
+}
+
+class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
+  int selectedNum = 9;
+  int number = 0;
+  int maxNum;
+  int prevMonthNum;
+  bool yearSelect = false;
+  bool monthSelect = false;
+  int selectedYear = 1998;
+  int selectedMonthIndex = 5;
+  DateTime monthFirstDate = DateTime(1998, 6);
+  AnimationController controllerM;
+  Animation<double> animationM;
+  AnimationController controllerY;
+  Animation<double> animationY;
+  List<String> months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ];
+  List<String> days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+  @override
+  void initState() {
+    super.initState();
+    controllerM =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+    animationM = Tween<double>(begin: 0, end: 0.5).animate(controllerM);
+    controllerY =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
+    animationY = Tween<double>(begin: 0, end: 0.5).animate(controllerY);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    monthFirstDate = DateTime(selectedYear, selectedMonthIndex + 1);
+    prevMonthNum = DateTime(selectedYear, selectedMonthIndex + 1, 0).day;
+    maxNum = DateTime(selectedYear, selectedMonthIndex + 2, 0).day;
+    number = -monthFirstDate.weekday;
+    if (number == -7) number = 0;
+    return Positioned(
+      width: 290,
+      height: 306,
+      child: CompositedTransformFollower(
+        link: widget.layerLink,
+        showWhenUnlinked: false,
+        offset: Offset(0.0, widget.size.height + 8.0),
+        child: Material(
+          color: AppColors.WHITE,
+          elevation: 3,
+          shadowColor: AppColors.SHADOW_24_LIGHT,
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          if (yearSelect) controllerY.reverse();
+                          yearSelect = false;
+                          monthSelect = !monthSelect;
+                          if (monthSelect)
+                            controllerM.forward();
+                          else
+                            controllerM.reverse();
+                        });
+                      },
+                      child: Container(
+                        color: Colors.transparent,
+                        child: Row(
+                          children: [
+                            Text(
+                              '${months[selectedMonthIndex]}',
+                              style: TextStyle(
+                                color: AppColors.ACCENT_MAIN,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            SizedBox(width: 12),
+                            RotationTransition(
+                              turns: animationM,
+                              child: Icon(
+                                AppIcons.caret_down_mini,
+                                size: 20,
+                                color: AppColors.ACCENT_MAIN,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 25),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          if (monthSelect) controllerM.reverse();
+                          monthSelect = false;
+                          yearSelect = !yearSelect;
+                          if (yearSelect)
+                            controllerY.forward();
+                          else
+                            controllerY.reverse();
+                        });
+                      },
+                      child: Container(
+                        color: Colors.transparent,
+                        child: Row(
+                          children: [
+                            Text(
+                              '$selectedYear',
+                              style: TextStyle(
+                                color: AppColors.ACCENT_MAIN,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            SizedBox(width: 12),
+                            RotationTransition(
+                              turns: animationY,
+                              child: Icon(
+                                AppIcons.caret_down_mini,
+                                size: 20,
+                                color: AppColors.ACCENT_MAIN,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: List.generate(
+                      7,
+                      (index) => Text(
+                        days[index],
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.TEXT_PLACEHOLDER_LIGHT,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                Expanded(
+                  child: AnimatedSwitcher(
+                    duration: Duration(milliseconds: 300),
+                    child: monthSelect
+                        ? GridView.count(
+                            crossAxisCount: 2,
+                            childAspectRatio: 4 / 2,
+                            children: List.generate(
+                              12,
+                              (index) => month(index),
+                            ),
+                          )
+                        : yearSelect
+                            ? GridView.count(
+                                crossAxisCount: 3,
+                                childAspectRatio: 3 / 2,
+                                children: List.generate(
+                                  100,
+                                  (index) => year(index),
+                                ),
+                              )
+                            : Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: List.generate(
+                                  5,
+                                  (ndx) => Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: List.generate(
+                                      7,
+                                      (index) {
+                                        number++;
+                                        return calendarNumber(number);
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget year(int index) {
+    return Container(
+      alignment: Alignment.center,
+      child: TextButton(
+        onPressed: () {
+          setState(() {
+            selectedYear = 1950 + index;
+            yearSelect = !yearSelect;
+            controllerY.reverse();
+          });
+        },
+        style: TextButton.styleFrom(
+          primary: AppColors.BLACK,
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50),
+          ),
+        ),
+        child: Text(
+          '${1950 + index}',
+          style: TextStyle(
+            fontSize: 16,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget month(int index) {
+    return Container(
+      alignment: Alignment.center,
+      child: TextButton(
+        onPressed: () {
+          setState(() {
+            selectedMonthIndex = index;
+            monthSelect = !monthSelect;
+            controllerM.reverse();
+          });
+        },
+        style: TextButton.styleFrom(
+          primary: AppColors.BLACK,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50),
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          child: Text(
+            '${months[index]}',
+            style: TextStyle(
+              fontSize: 16,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget calendarNumber(int index) {
+    return TextButton(
+      onPressed: number < 1 || number > maxNum
+          ? null
+          : () {
+              setState(() {
+                selectedNum = index;
+              });
+            },
+      style: TextButton.styleFrom(
+        primary: selectedNum == index
+            ? AppColors.WHITE
+            : number < 1 || number > maxNum
+                ? AppColors.TEXT_PLACEHOLDER_LIGHT
+                : AppColors.BLACK,
+        padding: EdgeInsets.zero,
+        minimumSize: Size(30, 30),
+        fixedSize: Size(30, 30),
+        textStyle: TextStyle(color: AppColors.BLACK, fontSize: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+        backgroundColor: selectedNum == index
+            ? AppColors.ACCENT_MAIN
+            : AppColors.TRANSPARENT,
+      ),
+      child: Text(
+        number < 1
+            ? '${prevMonthNum + number}'
+            : number > maxNum
+                ? '${number - maxNum}'
+                : '$number',
       ),
     );
   }
