@@ -2,12 +2,29 @@
 import 'package:flutter/material.dart';
 import 'package:tadah_flutter_components/tadah_flutter_components.dart';
 
+List<String> months = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+];
+List<String> days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
 class DatePicker extends StatefulWidget {
-  final String value;
   final String label;
-  final String hintText;
   final String helpText;
-  final ValueChanged<String> onChanged;
+  final DateTime initialDate;
+  final DateTime firstDate;
+  final DateTime lastDate;
+  final ValueChanged<DateTime> onChanged;
   final FocusNode focusNode;
   final Function(String) validator;
   final Widget prefix;
@@ -15,23 +32,24 @@ class DatePicker extends StatefulWidget {
   DatePicker({
     Key key,
     this.onChanged,
+    this.initialDate,
+    @required this.firstDate,
+    @required this.lastDate,
     this.focusNode,
-    this.value,
     this.prefix,
     this.label,
-    this.hintText,
     this.helpText,
     this.validator,
   }) : super(key: key);
 
   @override
-  _DropdownState createState() => _DropdownState();
+  _DatePickerState createState() => _DatePickerState();
 
-  static _DropdownState of(BuildContext context) =>
-      context.findAncestorStateOfType<_DropdownState>();
+  static _DatePickerState of(BuildContext context) =>
+      context.findAncestorStateOfType<_DatePickerState>();
 }
 
-class _DropdownState extends State<DatePicker>
+class _DatePickerState extends State<DatePicker>
     with SingleTickerProviderStateMixin {
   OverlayEntry _overlayEntry;
   final LayerLink _layerLink = LayerLink();
@@ -39,16 +57,23 @@ class _DropdownState extends State<DatePicker>
   Animation<double> animation;
   AnimationController controller;
   bool hovered = false;
-  String prev = '';
   FocusNode _focusNode;
   bool get disabled => widget.onChanged == null;
-  bool multiselect;
-  List<int> selectedItems = [];
+  DateTime selectedDate;
 
   @override
   void initState() {
     super.initState();
-    _focusNode = widget.focusNode ?? FocusNode();
+    if (widget.initialDate == null)
+      selectedDate = widget.firstDate.isBefore(DateTime.now()) &&
+              widget.lastDate.isAfter(DateTime.now())
+          ? DateTime.now()
+          : widget.lastDate;
+    else
+      selectedDate = widget.initialDate;
+    _focusNode = FocusNode();
+    textController.text =
+        '${days[selectedDate.weekday % 7]}, ${months[selectedDate.month - 1].substring(0, 3)} ${selectedDate.day}, ${selectedDate.year}';
     controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 200));
     animation = Tween<double>(begin: 0, end: 0.5).animate(controller);
@@ -56,7 +81,14 @@ class _DropdownState extends State<DatePicker>
       builder: (ctx) {
         RenderBox renderBox = context.findRenderObject();
         var size = renderBox.size;
-        return Calendar(layerLink: _layerLink, size: size);
+        return Calendar(
+          layerLink: _layerLink,
+          size: size,
+          initialDate: selectedDate,
+          firstDate: widget.firstDate,
+          lastDate: widget.lastDate,
+          select: selectDate,
+        );
       },
     );
 
@@ -67,12 +99,37 @@ class _DropdownState extends State<DatePicker>
           controller.forward();
         } else {
           _overlayEntry.remove();
+          refreshOverlayEntry();
           controller.reverse();
         }
 
         setState(() {});
       }
     });
+  }
+
+  void refreshOverlayEntry() {
+    _overlayEntry = OverlayEntry(
+      builder: (ctx) {
+        RenderBox renderBox = context.findRenderObject();
+        var size = renderBox.size;
+        return Calendar(
+          layerLink: _layerLink,
+          size: size,
+          initialDate: selectedDate,
+          firstDate: widget.firstDate,
+          lastDate: widget.lastDate,
+          select: selectDate,
+        );
+      },
+    );
+  }
+
+  void selectDate(DateTime date) {
+    widget.onChanged(date);
+    selectedDate = date;
+    textController.text =
+        '${days[date.weekday % 7]}, ${months[date.month - 1].substring(0, 3)} ${date.day}, ${date.year}';
   }
 
   @override
@@ -112,7 +169,7 @@ class _DropdownState extends State<DatePicker>
               color: Colors.transparent,
               child: IgnorePointer(
                 child: TextFormField(
-                  focusNode: _focusNode ?? FocusNode(),
+                  focusNode: _focusNode,
                   readOnly: true,
                   validator: widget.validator,
                   enabled: !disabled,
@@ -167,7 +224,7 @@ class _DropdownState extends State<DatePicker>
                       ),
                     ),
                     prefixIcon: Padding(
-                      padding: const EdgeInsets.only(left: 12),
+                      padding: const EdgeInsets.only(left: 12, right: 12),
                       child: widget.prefix ?? Icon(AppIcons.calendar),
                     ),
                     prefixIconConstraints: BoxConstraints(
@@ -175,7 +232,6 @@ class _DropdownState extends State<DatePicker>
                       maxHeight: 50,
                     ),
                     labelText: widget.label,
-                    hintText: widget.hintText,
                     helperText: widget.helpText,
                   ),
                 ),
@@ -191,45 +247,46 @@ class _DropdownState extends State<DatePicker>
 class Calendar extends StatefulWidget {
   final LayerLink layerLink;
   final Size size;
-  Calendar({this.size, this.layerLink, Key key}) : super(key: key);
+  final DateTime initialDate;
+  final DateTime firstDate;
+  final DateTime lastDate;
+  final Function(DateTime) select;
+  Calendar({
+    this.size,
+    this.layerLink,
+    this.initialDate,
+    this.firstDate,
+    this.lastDate,
+    this.select,
+    Key key,
+  }) : super(key: key);
 
   @override
   _CalendarState createState() => _CalendarState();
 }
 
 class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
-  int selectedNum = 9;
+  int selectedNum;
   int number = 0;
   int maxNum;
   int prevMonthNum;
   bool yearSelect = false;
   bool monthSelect = false;
-  int selectedYear = 1998;
-  int selectedMonthIndex = 5;
-  DateTime monthFirstDate = DateTime(1998, 6);
+  int selectedYear;
+  int selectedMonthIndex;
+  DateTime monthFirstDate;
   AnimationController controllerM;
   Animation<double> animationM;
   AnimationController controllerY;
   Animation<double> animationY;
-  List<String> months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-  ];
-  List<String> days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   @override
   void initState() {
     super.initState();
+
+    selectedNum = widget.initialDate.day;
+    selectedYear = widget.initialDate.year;
+    selectedMonthIndex = widget.initialDate.month - 1;
     controllerM =
         AnimationController(vsync: this, duration: Duration(milliseconds: 200));
     animationM = Tween<double>(begin: 0, end: 0.5).animate(controllerM);
@@ -269,6 +326,7 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
                           if (yearSelect) controllerY.reverse();
                           yearSelect = false;
                           monthSelect = !monthSelect;
+
                           if (monthSelect)
                             controllerM.forward();
                           else
@@ -375,7 +433,9 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
                                 crossAxisCount: 3,
                                 childAspectRatio: 3 / 2,
                                 children: List.generate(
-                                  100,
+                                  widget.lastDate.year -
+                                      widget.firstDate.year +
+                                      1,
                                   (index) => year(index),
                                 ),
                               )
@@ -413,20 +473,27 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
       child: TextButton(
         onPressed: () {
           setState(() {
-            selectedYear = 1950 + index;
+            selectedYear = widget.firstDate.year + index;
             yearSelect = !yearSelect;
+            widget.select(
+                DateTime(selectedYear, selectedMonthIndex + 1, selectedNum));
             controllerY.reverse();
           });
         },
         style: TextButton.styleFrom(
-          primary: AppColors.BLACK,
+          primary: selectedYear == widget.firstDate.year + index
+              ? AppColors.WHITE
+              : AppColors.BLACK,
+          backgroundColor: selectedYear == widget.firstDate.year + index
+              ? AppColors.ACCENT_MAIN
+              : AppColors.TRANSPARENT,
           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(50),
           ),
         ),
         child: Text(
-          '${1950 + index}',
+          '${widget.firstDate.year + index}',
           style: TextStyle(
             fontSize: 16,
           ),
@@ -443,11 +510,17 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
           setState(() {
             selectedMonthIndex = index;
             monthSelect = !monthSelect;
+            widget.select(
+                DateTime(selectedYear, selectedMonthIndex + 1, selectedNum));
             controllerM.reverse();
           });
         },
         style: TextButton.styleFrom(
-          primary: AppColors.BLACK,
+          primary:
+              selectedMonthIndex == index ? AppColors.WHITE : AppColors.BLACK,
+          backgroundColor: selectedMonthIndex == index
+              ? AppColors.ACCENT_MAIN
+              : AppColors.TRANSPARENT,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(50),
           ),
@@ -472,6 +545,8 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
           : () {
               setState(() {
                 selectedNum = index;
+                widget.select(DateTime(
+                    selectedYear, selectedMonthIndex + 1, selectedNum));
               });
             },
       style: TextButton.styleFrom(
