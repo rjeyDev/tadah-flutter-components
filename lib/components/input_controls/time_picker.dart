@@ -46,6 +46,7 @@ class _TimePickerState extends State<TimePicker>
     super.initState();
     _focusNode = FocusNode();
     textController.text = '';
+    selectTime(widget.initialTime ?? TimeOfDay.now());
     controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 200));
     animation = Tween<double>(begin: 0, end: 0.5).animate(controller);
@@ -56,6 +57,7 @@ class _TimePickerState extends State<TimePicker>
         return TimeSelect(
           layerLink: _layerLink,
           size: size,
+          initialTime: selectedTime,
           select: selectTime,
         );
       },
@@ -85,6 +87,7 @@ class _TimePickerState extends State<TimePicker>
         return TimeSelect(
           layerLink: _layerLink,
           size: size,
+          initialTime: selectedTime,
           select: selectTime,
         );
       },
@@ -94,7 +97,11 @@ class _TimePickerState extends State<TimePicker>
   void selectTime(TimeOfDay time) {
     widget.onChanged(time);
     selectedTime = time;
-    textController.text = '';
+    textController.text = (time.hour < 10 ? '0' : '') +
+        time.hour.toString() +
+        ' : ' +
+        (time.minute < 10 ? '0' : '') +
+        time.minute.toString();
   }
 
   @override
@@ -190,7 +197,7 @@ class _TimePickerState extends State<TimePicker>
                     ),
                     prefixIcon: Padding(
                       padding: const EdgeInsets.only(left: 12, right: 12),
-                      child: widget.prefix ?? Icon(AppIcons.calendar),
+                      child: widget.prefix ?? Icon(AppIcons.clock),
                     ),
                     prefixIconConstraints: BoxConstraints(
                       minWidth: 16,
@@ -212,28 +219,40 @@ class _TimePickerState extends State<TimePicker>
 class TimeSelect extends StatefulWidget {
   final LayerLink layerLink;
   final Size size;
-
+  final TimeOfDay initialTime;
   final Function(TimeOfDay) select;
+
   TimeSelect({
     this.size,
+    this.initialTime,
     this.layerLink,
     this.select,
     Key key,
   }) : super(key: key);
 
   @override
-  _CalendarState createState() => _CalendarState();
+  _TimeSelectState createState() => _TimeSelectState();
 }
 
-class _CalendarState extends State<TimeSelect> with TickerProviderStateMixin {
+class _TimeSelectState extends State<TimeSelect> with TickerProviderStateMixin {
   AnimationController controllerM;
   Animation<double> animationM;
   AnimationController controllerY;
   Animation<double> animationY;
+  TextEditingController hourController;
+  TextEditingController minuteController;
+  int hour;
+  int minute;
 
   @override
   void initState() {
     super.initState();
+    hour = widget.initialTime.hour;
+    minute = widget.initialTime.minute;
+    hourController =
+        TextEditingController(text: (hour < 10 ? '0' : '') + hour.toString());
+    minuteController = TextEditingController(
+        text: (minute < 10 ? '0' : '') + minute.toString());
 
     controllerM =
         AnimationController(vsync: this, duration: Duration(milliseconds: 200));
@@ -274,21 +293,54 @@ class _CalendarState extends State<TimeSelect> with TickerProviderStateMixin {
                       ),
                     ),
                     Text(
-                      '16',
+                      hourController.text,
                       style: TextStyle(
                         color: AppColors.TEXT_PRIMARY_LIGHT,
                         fontSize: 16,
                       ),
                     ),
+                    // SizedBox(
+                    //   width: 50,
+                    //   height: 25,
+                    //   child: TextFormField(
+                    //     controller: hourController,
+                    //     style: TextStyle(
+                    //       color: AppColors.TEXT_PRIMARY_LIGHT,
+                    //       fontSize: 16,
+                    //     ),
+                    //     decoration: InputDecoration(
+                    //       contentPadding: EdgeInsets.zero,
+                    //       border: InputBorder.none,
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(AppIcons.caret_up_mini,
-                        size: 16, color: AppColors.ACCENT_MAIN),
-                    Icon(AppIcons.caret_down_mini,
-                        size: 16, color: AppColors.ACCENT_MAIN),
+                    iconButton(() {
+                      setState(() {
+                        if (hour < 23)
+                          hour++;
+                        else
+                          hour = 0;
+                        hourController.text =
+                            (hour < 10 ? '0' : '') + hour.toString();
+                        widget.select(TimeOfDay(hour: hour, minute: minute));
+                      });
+                    }, AppIcons.caret_up_mini),
+                    iconButton(() {
+                      setState(() {
+                        if (hour > 0)
+                          hour--;
+                        else
+                          hour = 23;
+                        hourController.text =
+                            (hour < 10 ? '0' : '') + hour.toString();
+                        widget.select(TimeOfDay(hour: hour, minute: minute));
+                      });
+                    }, AppIcons.caret_down_mini),
                   ],
                 ),
                 Container(
@@ -308,21 +360,55 @@ class _CalendarState extends State<TimeSelect> with TickerProviderStateMixin {
                       ),
                     ),
                     Text(
-                      '30',
+                      minuteController.text,
                       style: TextStyle(
                         color: AppColors.TEXT_PRIMARY_LIGHT,
                         fontSize: 16,
                       ),
                     ),
+                    // SizedBox(
+                    //   width: 50,
+                    //   height: 25,
+                    //   child: TextFormField(
+                    //     controller: minuteController,
+                    //     autofocus: true,
+                    //     style: TextStyle(
+                    //       color: AppColors.TEXT_PRIMARY_LIGHT,
+                    //       fontSize: 16,
+                    //     ),
+                    //     decoration: InputDecoration(
+                    //       border: InputBorder.none,
+                    //       contentPadding: EdgeInsets.zero,
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(AppIcons.caret_up_mini,
-                        size: 16, color: AppColors.ACCENT_MAIN),
-                    Icon(AppIcons.caret_down_mini,
-                        size: 16, color: AppColors.ACCENT_MAIN),
+                    iconButton(() {
+                      setState(() {
+                        if (minute < 59)
+                          minute++;
+                        else
+                          minute = 0;
+                        minuteController.text =
+                            (minute < 10 ? '0' : '') + minute.toString();
+                        widget.select(TimeOfDay(hour: hour, minute: minute));
+                      });
+                    }, AppIcons.caret_up_mini),
+                    iconButton(() {
+                      setState(() {
+                        if (minute > 0)
+                          minute--;
+                        else
+                          minute = 59;
+                        minuteController.text =
+                            (minute < 10 ? '0' : '') + minute.toString();
+                        widget.select(TimeOfDay(hour: hour, minute: minute));
+                      });
+                    }, AppIcons.caret_down_mini),
                   ],
                 ),
               ],
@@ -330,6 +416,25 @@ class _CalendarState extends State<TimeSelect> with TickerProviderStateMixin {
           ),
         ),
       ),
+    );
+  }
+
+  Widget iconButton(Function onPressed, IconData icon) {
+    return IconButton(
+      onPressed: onPressed,
+      padding: EdgeInsets.zero,
+      constraints: BoxConstraints(
+        minWidth: 20,
+        maxHeight: 20,
+        minHeight: 20,
+        maxWidth: 20,
+      ),
+      iconSize: 20,
+      splashRadius: 10,
+      splashColor: AppColors.BLUE_VIOLET_500_16_WO,
+      hoverColor: AppColors.BLUE_VIOLET_500_8_WO,
+      highlightColor: AppColors.BLUE_VIOLET_500_24_WO,
+      icon: Icon(icon, size: 16, color: AppColors.ACCENT_MAIN),
     );
   }
 }
