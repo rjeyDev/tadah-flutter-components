@@ -539,37 +539,42 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
   }
 
   Widget calendarNumber(int index) {
-    return TextButton(
-      onPressed: number < 1 || number > maxNum
-          ? null
-          : () {
-              setState(() {
-                selectedNum = index;
-                widget.select(DateTime(
-                    selectedYear, selectedMonthIndex + 1, selectedNum));
-              });
-            },
-      style: TextButton.styleFrom(
-        primary: selectedNum == index
-            ? AppColors.WHITE
-            : number < 1 || number > maxNum
-                ? AppColors.TEXT_PLACEHOLDER_LIGHT
-                : AppColors.BLACK,
-        padding: EdgeInsets.zero,
-        minimumSize: Size(30, 30),
-        fixedSize: Size(30, 30),
-        textStyle: TextStyle(color: AppColors.BLACK, fontSize: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-        backgroundColor: selectedNum == index
-            ? AppColors.ACCENT_MAIN
-            : AppColors.TRANSPARENT,
-      ),
-      child: Text(
-        number < 1
-            ? '${prevMonthNum + number}'
-            : number > maxNum
-                ? '${number - maxNum}'
-                : '$number',
+    return Container(
+      width: 30,
+      height: 30,
+      child: TextButton(
+        onPressed: number < 1 || number > maxNum
+            ? null
+            : () {
+                setState(() {
+                  selectedNum = index;
+                  widget.select(DateTime(
+                      selectedYear, selectedMonthIndex + 1, selectedNum));
+                });
+              },
+        style: TextButton.styleFrom(
+          primary: selectedNum == index
+              ? AppColors.WHITE
+              : number < 1 || number > maxNum
+                  ? AppColors.TEXT_PLACEHOLDER_LIGHT
+                  : AppColors.BLACK,
+          padding: EdgeInsets.zero,
+          minimumSize: Size(30, 30),
+          fixedSize: Size(20, 20),
+          textStyle: TextStyle(color: AppColors.BLACK, fontSize: 16),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+          backgroundColor: selectedNum == index
+              ? AppColors.ACCENT_MAIN
+              : AppColors.TRANSPARENT,
+        ),
+        child: Text(
+          number < 1
+              ? '${prevMonthNum + number}'
+              : number > maxNum
+                  ? '${number - maxNum}'
+                  : '$number',
+        ),
       ),
     );
   }

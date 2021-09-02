@@ -89,7 +89,8 @@ class _DropdownState extends State<Dropdown>
             multiselect: widget.multiselect,
             selected: selectedItems.contains(index),
             onTap: (value) {
-              if (widget.multiselect) {
+              if (widget.multiselect &&
+                  widget.children[index].type == DropdownItemType.classic) {
                 print('hey');
                 if (selectedItems.contains(index))
                   selectedItems.removeWhere((element) => element == index);
@@ -178,6 +179,7 @@ class _DropdownState extends State<Dropdown>
             },
             child: Container(
               color: Colors.transparent,
+              height: 50,
               child: IgnorePointer(
                 child: TextFormField(
                   focusNode: _focusNode ?? FocusNode(),
@@ -233,22 +235,32 @@ class _DropdownState extends State<Dropdown>
                             : AppColors.BLACK_38_WO,
                       ),
                     ),
-                    prefixIcon: widget.multiselect
-                        ? Wrap(
-                            clipBehavior: Clip.antiAlias,
-                            children: [
-                              if (widget.prefix != null)
-                                SizedBox(
-                                    height: 50,
-                                    width: 40,
-                                    child: widget.prefix),
-                            ],
-                          )
-                        : widget.prefix,
+                    prefixIcon: Padding(
+                      padding: const EdgeInsets.only(left: 12, right: 12),
+                      child: widget.prefix ?? Icon(AppIcons.calendar),
+                    ),
                     prefixIconConstraints: BoxConstraints(
                       minWidth: 16,
                       maxHeight: 50,
                     ),
+                    // prefixIcon: widget.prefix,
+                    //  widget.multiselect
+                    //     ? Wrap(
+                    //         clipBehavior: Clip.antiAlias,
+                    //         children: [
+                    //           if (widget.prefix != null)
+                    //             SizedBox(
+                    //                 height: 40,
+                    //                 width: 40,
+                    //                 child: widget.prefix),
+                    //         ],
+                    //       )
+                    //     : widget.prefix,
+                    // prefixIconConstraints: BoxConstraints(
+                    //   minWidth: 40,
+                    //   maxWidth: 40,
+                    //   maxHeight: 40,
+                    // ),
                     labelText: widget.label,
                     hintText: widget.hintText,
                     helperText: widget.helpText,
