@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:tadah_flutter_components/tadah_flutter_components.dart';
 
-List<String> months = [
+const List<String> months = [
   'January',
   'February',
   'March',
@@ -16,7 +16,7 @@ List<String> months = [
   'November',
   'December'
 ];
-List<String> days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const List<String> days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 class DatePicker extends StatefulWidget {
   final String label;
@@ -399,13 +399,14 @@ class _CalendarState extends State<Calendar> with TickerProviderStateMixin {
                   ],
                 ),
                 SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: List.generate(
-                      7,
-                      (index) => Text(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: List.generate(
+                    7,
+                    (index) => Container(
+                      width: 30,
+                      alignment: Alignment.center,
+                      child: Text(
                         days[index],
                         style: TextStyle(
                           fontSize: 12,
