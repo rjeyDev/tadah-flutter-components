@@ -50,6 +50,5 @@ const AppThemeData themeLightCommon = const AppThemeData(
     inputDisabledUnderlined: AppColors.BORDER_INPUT_DISABLED_UNDERLINED_LIGHT,
     commonUnderline: AppColors.BORDER_COMMON_UNDERLINED_LIGHT,
   ),
-  // TODO-change separate color
   chatLoader: AppColors.BACKGROUND_TOAST_LIGHT,
 );

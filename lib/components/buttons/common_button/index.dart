@@ -29,8 +29,8 @@ enum CommonButtonSize {
 }
 
 enum IconPosition {
-  Left,
-  Right,
+  left,
+  right,
 }
 
 class CommonButton extends StatefulWidget {
@@ -41,7 +41,7 @@ class CommonButton extends StatefulWidget {
     FocusNode focusNode,
     bool autoFocus = false,
     IconData icon,
-    IconPosition iconPosition = IconPosition.Left,
+    IconPosition iconPosition = IconPosition.left,
     VoidCallback onPressed,
     bool loading = false,
     CommonButtonType type = CommonButtonType.Primary,
@@ -61,7 +61,7 @@ class CommonButton extends StatefulWidget {
       fontWeight: fontWeight,
       fontSize: fontSize,
       wide: wide,
-      prefixBuilder: iconPosition == IconPosition.Left
+      prefixBuilder: iconPosition == IconPosition.left
           ? (context, type, animation, color) => Padding(
                 padding: EdgeInsets.only(
                     right: size == CommonButtonSize.Small ? 4 : 8),
@@ -74,7 +74,7 @@ class CommonButton extends StatefulWidget {
                 ),
               )
           : null,
-      suffixBuilder: iconPosition == IconPosition.Right
+      suffixBuilder: iconPosition == IconPosition.right
           ? (context, type, animation, color) => Padding(
                 padding: EdgeInsets.only(
                     left: size == CommonButtonSize.Small ? 4 : 8),
@@ -217,9 +217,11 @@ class _CommonButtonState extends State<CommonButton> {
   }
 
   FontWeight _fontWeight(context) {
-    return widget.fontWeight ?? widget.size == CommonButtonSize.Small
-        ? FontWeight.w600
-        : FontWeight.w400;
+    return widget.fontWeight != null
+        ? widget.fontWeight
+        : widget.size == CommonButtonSize.Small
+            ? FontWeight.w600
+            : FontWeight.w400;
   }
 
   EdgeInsets _contentPadding(context) {
@@ -382,7 +384,7 @@ class _CommonButtonState extends State<CommonButton> {
                       setState(() {
                         // hovered = false;
                         pressed = true;
-                        FocusScope.of(context).requestFocus(FocusNode());
+                        // FocusScope.of(context).requestFocus(FocusNode());
                         // pressed = true;
                       });
                     }

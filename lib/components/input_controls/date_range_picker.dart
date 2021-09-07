@@ -1,5 +1,6 @@
 //@dart=2.9
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:tadah_flutter_components/tadah_flutter_components.dart';
 
 class DateRangePicker extends StatefulWidget {
@@ -46,6 +47,7 @@ class _DateRangePickerState extends State<DateRangePicker>
   AnimationController controller;
   bool hovered = false;
   FocusNode _focusNode;
+  bool focusListen = true;
   bool get disabled => widget.onChanged == null;
   DateTime selectedStartDate;
   DateTime selectedEndDate;
@@ -65,7 +67,7 @@ class _DateRangePickerState extends State<DateRangePicker>
     }
     _focusNode = FocusNode();
     textController.text =
-        '${days[selectedStartDate.weekday % 7]}, ${months[selectedStartDate.month - 1].substring(0, 3)} ${selectedStartDate.day}, ${selectedStartDate.year}';
+        '${selectedStartDate.day}/${selectedStartDate.month}/${selectedStartDate.year} - ${selectedEndDate.day}/${selectedEndDate.month}/${selectedEndDate.year}';
     controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 200));
     animation = Tween<double>(begin: 0, end: 0.5).animate(controller);
@@ -76,7 +78,9 @@ class _DateRangePickerState extends State<DateRangePicker>
         return RangeCalendar(
           layerLink: _layerLink,
           size: size,
+          focusListener: focusListener,
           initialStartDate: selectedStartDate,
+          initialEndDate: selectedEndDate,
           firstDate: widget.firstDate,
           lastDate: widget.lastDate,
           select: selectDate,
@@ -85,11 +89,18 @@ class _DateRangePickerState extends State<DateRangePicker>
     );
 
     _focusNode.addListener(() {
-      if (!disabled) {
-        if (_focusNode.hasFocus) {
+      if (!disabled && focusListen) {
+        if (_focusNode.hasFocus && !_overlayEntry.mounted) {
           Overlay.of(context).insert(_overlayEntry);
           controller.forward();
         } else {
+          if (_focusNode.hasFocus) {
+            focusListen = false;
+            _focusNode.unfocus();
+            Future.delayed(Duration(milliseconds: 100), () {
+              focusListen = true;
+            });
+          }
           _overlayEntry.remove();
           refreshOverlayEntry();
           controller.reverse();
@@ -108,13 +119,19 @@ class _DateRangePickerState extends State<DateRangePicker>
         return RangeCalendar(
           layerLink: _layerLink,
           size: size,
+          focusListener: focusListener,
           initialStartDate: selectedStartDate,
+          initialEndDate: selectedEndDate,
           firstDate: widget.firstDate,
           lastDate: widget.lastDate,
           select: selectDate,
         );
       },
     );
+  }
+
+  focusListener(bool value) {
+    focusListen = value;
   }
 
   void selectDate(DateTime date) {
@@ -240,13 +257,17 @@ class RangeCalendar extends StatefulWidget {
   final LayerLink layerLink;
   final Size size;
   final DateTime initialStartDate;
+  final DateTime initialEndDate;
   final DateTime firstDate;
   final DateTime lastDate;
+  final Function(bool) focusListener;
   final Function(DateTime) select;
   RangeCalendar({
     this.size,
     this.layerLink,
+    this.focusListener,
     this.initialStartDate,
+    this.initialEndDate,
     this.firstDate,
     this.lastDate,
     this.select,
@@ -259,317 +280,344 @@ class RangeCalendar extends StatefulWidget {
 
 class _RangeCalendarState extends State<RangeCalendar>
     with TickerProviderStateMixin {
-  int selectedNum;
-  int number = 0;
-  int maxNum;
+  int startDay;
+  int maxDay;
   int prevMonthNum;
   bool yearSelect = false;
   bool monthSelect = false;
-  int selectedYear;
-  int selectedMonthIndex;
+  int startYear;
+  int startMonth;
+  DateTime selectedMonth;
   DateTime monthFirstDate;
-  AnimationController controllerM;
-  Animation<double> animationM;
-  AnimationController controllerY;
-  Animation<double> animationY;
+  MaskedTextController controller1 = MaskedTextController(mask: '00/00/0000');
+  MaskedTextController controller2 = MaskedTextController(mask: '00/00/0000');
+  // Animation<double> animation;
+  // AnimationController animationController;
+
+  FocusScopeNode focusScopeNode = FocusScopeNode();
 
   @override
   void initState() {
     super.initState();
+    startDay = widget.initialStartDate.day;
+    startYear = widget.initialStartDate.year;
+    startMonth = widget.initialStartDate.month;
+    selectedMonth = widget.initialStartDate;
+    // animationController = AnimationController(
+    //   vsync: this,
+    //   duration: Duration(milliseconds: 100),
+    //   reverseDuration: Duration(milliseconds: 100),
+    // );
+    // animation = Tween<double>(begin: 1, end: 0).animate(animationController);
+  }
 
-    selectedNum = widget.initialStartDate.day;
-    selectedYear = widget.initialStartDate.year;
-    selectedMonthIndex = widget.initialStartDate.month - 1;
-    controllerM =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
-    animationM = Tween<double>(begin: 0, end: 0.5).animate(controllerM);
-    controllerY =
-        AnimationController(vsync: this, duration: Duration(milliseconds: 200));
-    animationY = Tween<double>(begin: 0, end: 0.5).animate(controllerY);
+  @override
+  void dispose() {
+    focusScopeNode.dispose();
+    super.dispose();
+  }
+
+  moveBack() {
+    setState(() {
+      // animationController.forward();
+      // Future.delayed(Duration(milliseconds: 100), () {
+      //   animationController.reverse();
+      // });
+      selectedMonth = DateTime(
+        selectedMonth.month == 1 ? selectedMonth.year - 1 : selectedMonth.year,
+        selectedMonth.month - 1 == 0 ? 12 : selectedMonth.month - 1,
+      );
+    });
+  }
+
+  moveForward() {
+    setState(() {
+      // animationController.forward();
+      // Future.delayed(Duration(milliseconds: 100), () {
+      //   animationController.reverse();
+      // });
+      selectedMonth = DateTime(
+        selectedMonth.month == 12 ? selectedMonth.year + 1 : selectedMonth.year,
+        selectedMonth.month + 1 == 13 ? 1 : selectedMonth.month + 1,
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    monthFirstDate = DateTime(selectedYear, selectedMonthIndex + 1);
-    prevMonthNum = DateTime(selectedYear, selectedMonthIndex + 1, 0).day;
-    maxNum = DateTime(selectedYear, selectedMonthIndex + 2, 0).day;
-    number = -monthFirstDate.weekday;
-    if (number == -7) number = 0;
     return Positioned(
-      width: 290,
-      height: 306,
+      width: 596,
+      height: 412,
       child: CompositedTransformFollower(
         link: widget.layerLink,
         showWhenUnlinked: false,
         offset: Offset(0.0, widget.size.height + 8.0),
-        child: Material(
-          color: AppColors.WHITE,
-          elevation: 3,
-          shadowColor: AppColors.SHADOW_24_LIGHT,
-          borderRadius: BorderRadius.circular(8),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          if (yearSelect) controllerY.reverse();
-                          yearSelect = false;
-                          monthSelect = !monthSelect;
-
-                          if (monthSelect)
-                            controllerM.forward();
-                          else
-                            controllerM.reverse();
-                        });
-                      },
-                      child: Container(
-                        color: Colors.transparent,
-                        child: Row(
-                          children: [
-                            Text(
-                              '${months[selectedMonthIndex]}',
-                              style: TextStyle(
-                                color: AppColors.ACCENT_MAIN,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            SizedBox(width: 12),
-                            RotationTransition(
-                              turns: animationM,
-                              child: Icon(
-                                AppIcons.caret_down_mini,
-                                size: 20,
-                                color: AppColors.ACCENT_MAIN,
-                              ),
-                            ),
-                          ],
-                        ),
+        child: FocusScope(
+          node: focusScopeNode,
+          child: Builder(
+            builder: (context) {
+              return Material(
+                color: AppColors.WHITE,
+                elevation: 3,
+                shadowColor: AppColors.SHADOW_24_LIGHT,
+                borderRadius: BorderRadius.circular(8),
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CommonButton.withIcon(
+                            months[selectedMonth.month - 1] +
+                                ' ${selectedMonth.year}',
+                            onPressed: () {
+                              moveBack();
+                            },
+                            type: CommonButtonType.Contrast,
+                            fontWeight: FontWeight.w600,
+                            iconPosition: IconPosition.left,
+                            icon: AppIcons.caret_left_mini,
+                          ),
+                          CommonButton.withIcon(
+                            months[selectedMonth.month == 12
+                                    ? 0
+                                    : selectedMonth.month] +
+                                ' ${selectedMonth.month == 12 ? selectedMonth.year + 1 : selectedMonth.year}',
+                            onPressed: () {
+                              moveForward();
+                            },
+                            fontWeight: FontWeight.w600,
+                            type: CommonButtonType.Contrast,
+                            iconPosition: IconPosition.right,
+                            icon: AppIcons.caret_right_mini,
+                          ),
+                        ],
                       ),
-                    ),
-                    SizedBox(width: 25),
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          if (monthSelect) controllerM.reverse();
-                          monthSelect = false;
-                          yearSelect = !yearSelect;
-                          if (yearSelect)
-                            controllerY.forward();
-                          else
-                            controllerY.reverse();
-                        });
-                      },
-                      child: Container(
-                        color: Colors.transparent,
-                        child: Row(
-                          children: [
-                            Text(
-                              '$selectedYear',
-                              style: TextStyle(
-                                color: AppColors.ACCENT_MAIN,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            SizedBox(width: 12),
-                            RotationTransition(
-                              turns: animationY,
-                              child: Icon(
-                                AppIcons.caret_down_mini,
-                                size: 20,
-                                color: AppColors.ACCENT_MAIN,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: List.generate(
-                    7,
-                    (index) => Container(
-                      width: 30,
-                      alignment: Alignment.center,
-                      child: Text(
-                        days[index],
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.TEXT_PLACEHOLDER_LIGHT,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10),
-                Expanded(
-                  child: AnimatedSwitcher(
-                    duration: Duration(milliseconds: 300),
-                    child: monthSelect
-                        ? GridView.count(
-                            crossAxisCount: 2,
-                            childAspectRatio: 4 / 2,
-                            children: List.generate(
-                              12,
-                              (index) => month(index),
-                            ),
-                          )
-                        : yearSelect
-                            ? GridView.count(
-                                crossAxisCount: 3,
-                                childAspectRatio: 3 / 2,
-                                children: List.generate(
-                                  widget.lastDate.year -
-                                      widget.firstDate.year +
-                                      1,
-                                  (index) => year(index),
-                                ),
-                              )
-                            : Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: List.generate(
-                                  5,
-                                  (ndx) => Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: List.generate(
-                                      7,
-                                      (index) {
-                                        number++;
-                                        return RangecalendarNumber(number);
-                                      },
+                      Spacer(flex: 1),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            width: 260,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: List.generate(
+                                7,
+                                (index) => Container(
+                                  width: 30,
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    days[index],
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.TEXT_PLACEHOLDER_LIGHT,
                                     ),
                                   ),
                                 ),
                               ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 260,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: List.generate(
+                                7,
+                                (index) => Container(
+                                  width: 30,
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    days[index],
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.TEXT_PLACEHOLDER_LIGHT,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          calendar(date: selectedMonth),
+                          calendar(
+                              date: DateTime(
+                                  selectedMonth.year +
+                                      (selectedMonth.month == 12 ? 1 : 0),
+                                  selectedMonth.month == 12
+                                      ? 1
+                                      : selectedMonth.month + 1)),
+                        ],
+                      ),
+                      Spacer(flex: 2),
+                      Row(
+                        children: [
+                          SizedBox(
+                            height: 45,
+                            width: 140,
+                            child: BasicTextInput(
+                              textInputType: TextInputType.number,
+                              labelText: 'From',
+                              hintText: 'dd/mm/yyyy',
+                              onChanged: (value) {
+                                print('hey');
+                                controller1.updateText(value);
+                                controller1.selection =
+                                    TextSelection.fromPosition(
+                                  TextPosition(offset: controller1.text.length),
+                                );
+                              },
+                              floatingLabelBehavior:
+                                  FloatingLabelBehavior.always,
+                              controller: controller1,
+                              onTap: () {
+                                widget.focusListener(false);
+                                Future.microtask(
+                                  () => widget.focusListener(true),
+                                );
+                              },
+                              // controller: TextEditingController(text: 'scdsdc'),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 40,
+                            child: Center(
+                              child: Container(
+                                width: 20,
+                                height: 1.5,
+                                color: AppColors.ACCENT_MAIN,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 45,
+                            width: 140,
+                            child: BasicTextInput(
+                              textInputType: TextInputType.number,
+                              floatingLabelBehavior:
+                                  FloatingLabelBehavior.always,
+                              labelText: 'To',
+                              hintText: 'dd/mm/yyyy',
+                              onChanged: (value) {
+                                controller2.updateText(value);
+                                controller2.selection =
+                                    TextSelection.fromPosition(TextPosition(
+                                        offset: controller2.text.length));
+                              },
+                              controller: controller2,
+                              onTap: () {
+                                widget.focusListener(false);
+                                Future.microtask(
+                                  () => widget.focusListener(true),
+                                );
+                              },
+                              // controller: TextEditingController(text: 'scdsdc'),
+                            ),
+                          ),
+                          Spacer(),
+                          CommonButton.withIcon(
+                            'Clear',
+                            onPressed: () {},
+                            type: CommonButtonType.Outlined,
+                            fontWeight: FontWeight.w600,
+                            icon: AppIcons.x,
+                          ),
+                          SizedBox(width: 16),
+                          CommonButton.withIcon(
+                            'Apply',
+                            onPressed: () {},
+                            fontWeight: FontWeight.w600,
+                            icon: AppIcons.check,
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-              ],
+                // },
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget calendar({DateTime date}) {
+    monthFirstDate = DateTime(date.year, date.month);
+    maxDay = DateTime(startYear, startMonth + 1, 0).day;
+    int number = -monthFirstDate.weekday;
+    if (number == -7) number = 0;
+    return SizedBox(
+      width: 260,
+      height: 220,
+      child: Column(
+        children: [
+          Expanded(
+            child: AnimatedSwitcher(
+              duration: Duration(milliseconds: 300),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: List.generate(
+                  5,
+                  (ndx) => Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: List.generate(
+                      7,
+                      (index) {
+                        number++;
+                        return rangeCalendarNumber(date, number);
+                      },
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
 
-  Widget year(int index) {
-    return Container(
-      alignment: Alignment.center,
-      child: TextButton(
-        onPressed: () {
-          setState(() {
-            selectedYear = widget.firstDate.year + index;
-            yearSelect = !yearSelect;
-            widget.select(
-                DateTime(selectedYear, selectedMonthIndex + 1, selectedNum));
-            controllerY.reverse();
-          });
-        },
-        style: TextButton.styleFrom(
-          primary: selectedYear == widget.firstDate.year + index
-              ? AppColors.WHITE
-              : AppColors.BLACK,
-          backgroundColor: selectedYear == widget.firstDate.year + index
-              ? AppColors.ACCENT_MAIN
-              : AppColors.TRANSPARENT,
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(50),
-          ),
-        ),
-        child: Text(
-          '${widget.firstDate.year + index}',
-          style: TextStyle(
-            fontSize: 16,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget month(int index) {
-    return Container(
-      alignment: Alignment.center,
-      child: TextButton(
-        onPressed: () {
-          setState(() {
-            selectedMonthIndex = index;
-            monthSelect = !monthSelect;
-            widget.select(
-                DateTime(selectedYear, selectedMonthIndex + 1, selectedNum));
-            controllerM.reverse();
-          });
-        },
-        style: TextButton.styleFrom(
-          primary:
-              selectedMonthIndex == index ? AppColors.WHITE : AppColors.BLACK,
-          backgroundColor: selectedMonthIndex == index
-              ? AppColors.ACCENT_MAIN
-              : AppColors.TRANSPARENT,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(50),
-          ),
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-          child: Text(
-            '${months[index]}',
-            style: TextStyle(
-              fontSize: 16,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget RangecalendarNumber(int index) {
+  Widget rangeCalendarNumber(DateTime date, int index) {
     return Container(
       width: 30,
       height: 30,
-      child: TextButton(
-        onPressed: number < 1 || number > maxNum
-            ? null
-            : () {
+      child: index < 1 || index > maxDay
+          ? SizedBox()
+          : TextButton(
+              onPressed: () {
                 setState(() {
-                  selectedNum = index;
-                  widget.select(DateTime(
-                      selectedYear, selectedMonthIndex + 1, selectedNum));
+                  widget.select(DateTime(date.year, date.month, index));
                 });
               },
-        style: TextButton.styleFrom(
-          primary: selectedNum == index
-              ? AppColors.WHITE
-              : number < 1 || number > maxNum
-                  ? AppColors.TEXT_PLACEHOLDER_LIGHT
-                  : AppColors.BLACK,
-          padding: EdgeInsets.zero,
-          minimumSize: Size(30, 30),
-          fixedSize: Size(20, 20),
-          textStyle: TextStyle(color: AppColors.BLACK, fontSize: 16),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-          backgroundColor: selectedNum == index
-              ? AppColors.ACCENT_MAIN
-              : AppColors.TRANSPARENT,
-        ),
-        child: Text(
-          number < 1
-              ? '${prevMonthNum + number}'
-              : number > maxNum
-                  ? '${number - maxNum}'
-                  : '$number',
-        ),
-      ),
+              style: TextButton.styleFrom(
+                primary:
+                    // selectedNum == index
+                    //     ? AppColors.WHITE
+                    // :
+                    AppColors.BLACK,
+                padding: EdgeInsets.zero,
+                minimumSize: Size(30, 30),
+                fixedSize: Size(20, 20),
+                textStyle: TextStyle(color: AppColors.BLACK, fontSize: 16),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(100)),
+                backgroundColor:
+                    // selectedNum == index
+                    //     ? AppColors.ACCENT_MAIN
+                    // :
+                    AppColors.TRANSPARENT,
+              ),
+              child: Text(
+                '$index',
+              ),
+            ),
     );
   }
 }

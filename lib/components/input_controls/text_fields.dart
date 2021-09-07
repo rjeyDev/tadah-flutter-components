@@ -14,19 +14,21 @@ class BasicTextInput extends StatefulWidget {
 
   const BasicTextInput({
     Key key,
-    @required this.controller,
+    this.controller,
     this.hintText,
     this.labelText,
     this.helpText,
-    this.fontSize = 14,
+    this.fontSize = 16,
     this.textInputType,
     this.focusNode,
     this.obscureText = false,
     this.disabled = false,
     this.onChanged,
     this.onSaved,
+    this.onTap,
     this.validator,
     this.prefix,
+    this.floatingLabelBehavior,
     this.maxlines = 1,
     this.minlines = 1,
     this.maxLength,
@@ -39,6 +41,7 @@ class BasicTextInput extends StatefulWidget {
   final String labelText;
   final String helpText;
   final double fontSize;
+  final FloatingLabelBehavior floatingLabelBehavior;
   final TextInputType textInputType;
   final FocusNode focusNode;
   final bool obscureText;
@@ -49,6 +52,7 @@ class BasicTextInput extends StatefulWidget {
   final Widget prefix;
   final ValueChanged<String> onChanged;
   final ValueChanged<String> onSaved;
+  final Function onTap;
   final String Function(String) validator;
 
   @override
@@ -109,11 +113,12 @@ class _BasicTextInputState extends State<BasicTextInput> {
         child: SizedBox(
           height: 70,
           child: TextFormField(
+            onTap: widget.onTap,
             onChanged: widget.onChanged,
             onSaved: widget.onSaved,
             validator: widget.validator,
             enabled: !widget.disabled,
-            controller: widget.controller,
+            controller: widget.controller ?? TextEditingController(),
             keyboardType: widget.textInputType,
             focusNode: _focusNode,
             maxLength: widget.maxLength,
@@ -135,8 +140,11 @@ class _BasicTextInputState extends State<BasicTextInput> {
             ],
             decoration: InputDecoration(
               enabled: !widget.disabled,
+              floatingLabelBehavior: widget.floatingLabelBehavior != null
+                  ? widget.floatingLabelBehavior
+                  : FloatingLabelBehavior.auto,
               filled: false,
-              contentPadding: const EdgeInsets.fromLTRB(12, 18, 12, 18),
+              contentPadding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
               // isDense: true,
               helperText: widget.helpText,
               suffixIconConstraints: BoxConstraints(
