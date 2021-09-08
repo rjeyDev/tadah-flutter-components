@@ -3,6 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tadah_flutter_components/tadah_flutter_components.dart';
 
+extension DateConverter on DateTime {
+  String toDateString() {
+    // print(thi);
+    if (this == null) return '';
+    return (this.day < 10 ? "0" : "") +
+        this.day.toString() +
+        '/' +
+        (this.month < 10 ? '0' : '') +
+        this.month.toString() +
+        '/' +
+        this.year.toString();
+  }
+}
+
 class DateRangePicker extends StatefulWidget {
   final String label;
   final String helpText;
@@ -10,18 +24,18 @@ class DateRangePicker extends StatefulWidget {
   final DateTime initialEndDate;
   final DateTime firstDate;
   final DateTime lastDate;
-  final ValueChanged<DateTime> onChanged;
+  final Function(DateTime, DateTime) onChanged;
   final FocusNode focusNode;
   final Function(String) validator;
   final Widget prefix;
 
   DateRangePicker({
     Key key,
+    @required this.firstDate,
+    @required this.lastDate,
     this.onChanged,
     this.initialStartDate,
     this.initialEndDate,
-    @required this.firstDate,
-    @required this.lastDate,
     this.focusNode,
     this.prefix,
     this.label,
@@ -67,7 +81,7 @@ class _DateRangePickerState extends State<DateRangePicker>
     }
     _focusNode = FocusNode();
     textController.text =
-        '${selectedStartDate.day}/${selectedStartDate.month}/${selectedStartDate.year} - ${selectedEndDate.day}/${selectedEndDate.month}/${selectedEndDate.year}';
+        '${selectedStartDate.toDateString()} - ${selectedEndDate.toDateString()}';
     controller =
         AnimationController(vsync: this, duration: Duration(milliseconds: 200));
     animation = Tween<double>(begin: 0, end: 0.5).animate(controller);
@@ -83,7 +97,9 @@ class _DateRangePickerState extends State<DateRangePicker>
           initialEndDate: selectedEndDate,
           firstDate: widget.firstDate,
           lastDate: widget.lastDate,
-          select: selectDate,
+          overlayEntry: _overlayEntry,
+          selectStart: selectStartDate,
+          selectEnd: selectEndDate,
         );
       },
     );
@@ -124,7 +140,9 @@ class _DateRangePickerState extends State<DateRangePicker>
           initialEndDate: selectedEndDate,
           firstDate: widget.firstDate,
           lastDate: widget.lastDate,
-          select: selectDate,
+          overlayEntry: _overlayEntry,
+          selectStart: selectStartDate,
+          selectEnd: selectEndDate,
         );
       },
     );
@@ -134,11 +152,20 @@ class _DateRangePickerState extends State<DateRangePicker>
     focusListen = value;
   }
 
-  void selectDate(DateTime date) {
-    widget.onChanged(date);
+  void selectStartDate(DateTime date) {
     selectedStartDate = date;
-    textController.text =
-        '${days[date.weekday % 7]}, ${months[date.month - 1].substring(0, 3)} ${date.day}, ${date.year}';
+    widget.onChanged(selectedStartDate, selectedEndDate);
+    textController.text = selectedStartDate.toDateString() +
+        ' - ' +
+        selectedEndDate.toDateString();
+  }
+
+  void selectEndDate(DateTime date) {
+    selectedEndDate = date;
+    widget.onChanged(selectedStartDate, selectedEndDate);
+    textController.text = selectedStartDate.toDateString() +
+        ' - ' +
+        selectedEndDate.toDateString();
   }
 
   @override
@@ -260,8 +287,10 @@ class RangeCalendar extends StatefulWidget {
   final DateTime initialEndDate;
   final DateTime firstDate;
   final DateTime lastDate;
+  final OverlayEntry overlayEntry;
   final Function(bool) focusListener;
-  final Function(DateTime) select;
+  final Function(DateTime) selectStart;
+  final Function(DateTime) selectEnd;
   RangeCalendar({
     this.size,
     this.layerLink,
@@ -270,7 +299,9 @@ class RangeCalendar extends StatefulWidget {
     this.initialEndDate,
     this.firstDate,
     this.lastDate,
-    this.select,
+    this.overlayEntry,
+    this.selectStart,
+    this.selectEnd,
     Key key,
   }) : super(key: key);
 
@@ -280,15 +311,15 @@ class RangeCalendar extends StatefulWidget {
 
 class _RangeCalendarState extends State<RangeCalendar>
     with TickerProviderStateMixin {
-  int startDay;
   int maxDay;
   int prevMonthNum;
   bool yearSelect = false;
   bool monthSelect = false;
-  int startYear;
-  int startMonth;
   DateTime selectedMonth;
   DateTime monthFirstDate;
+  bool selectFrom = true;
+  DateTime selectedStartDate;
+  DateTime selectedEndDate;
   MaskedTextController controller1 = MaskedTextController(mask: '00/00/0000');
   MaskedTextController controller2 = MaskedTextController(mask: '00/00/0000');
   // Animation<double> animation;
@@ -299,9 +330,10 @@ class _RangeCalendarState extends State<RangeCalendar>
   @override
   void initState() {
     super.initState();
-    startDay = widget.initialStartDate.day;
-    startYear = widget.initialStartDate.year;
-    startMonth = widget.initialStartDate.month;
+    selectedStartDate = widget.initialStartDate;
+    selectedEndDate = widget.initialEndDate;
+    controller1.updateText(selectedStartDate.toDateString());
+    controller2.updateText(selectedEndDate.toDateString());
     selectedMonth = widget.initialStartDate;
     // animationController = AnimationController(
     //   vsync: this,
@@ -323,10 +355,13 @@ class _RangeCalendarState extends State<RangeCalendar>
       // Future.delayed(Duration(milliseconds: 100), () {
       //   animationController.reverse();
       // });
-      selectedMonth = DateTime(
-        selectedMonth.month == 1 ? selectedMonth.year - 1 : selectedMonth.year,
-        selectedMonth.month - 1 == 0 ? 12 : selectedMonth.month - 1,
-      );
+      if (selectedMonth.isAfter(widget.firstDate))
+        selectedMonth = DateTime(
+          selectedMonth.month == 1
+              ? selectedMonth.year - 1
+              : selectedMonth.year,
+          selectedMonth.month - 1 == 0 ? 12 : selectedMonth.month - 1,
+        );
     });
   }
 
@@ -336,11 +371,26 @@ class _RangeCalendarState extends State<RangeCalendar>
       // Future.delayed(Duration(milliseconds: 100), () {
       //   animationController.reverse();
       // });
-      selectedMonth = DateTime(
-        selectedMonth.month == 12 ? selectedMonth.year + 1 : selectedMonth.year,
-        selectedMonth.month + 1 == 13 ? 1 : selectedMonth.month + 1,
-      );
+      if (selectedMonth.isBefore(widget.lastDate))
+        selectedMonth = DateTime(
+          selectedMonth.month == 12
+              ? selectedMonth.year + 1
+              : selectedMonth.year,
+          selectedMonth.month + 1 == 13 ? 1 : selectedMonth.month + 1,
+        );
     });
+  }
+
+  selectStartDate(DateTime date) {
+    selectedStartDate = date;
+    widget.selectStart(date);
+    controller1.updateText(date.toDateString());
+  }
+
+  selectEndDate(DateTime date) {
+    selectedEndDate = date;
+    widget.selectEnd(date);
+    controller2.updateText(date.toDateString());
   }
 
   @override
@@ -465,7 +515,15 @@ class _RangeCalendarState extends State<RangeCalendar>
                               labelText: 'From',
                               hintText: 'dd/mm/yyyy',
                               onChanged: (value) {
-                                print('hey');
+                                if (value.length == 10) {
+                                  selectStartDate(
+                                    DateTime(
+                                      int.parse(value.substring(6, 10)),
+                                      int.parse(value.substring(3, 5)),
+                                      int.parse(value.substring(0, 2)),
+                                    ),
+                                  );
+                                }
                                 controller1.updateText(value);
                                 controller1.selection =
                                     TextSelection.fromPosition(
@@ -476,6 +534,7 @@ class _RangeCalendarState extends State<RangeCalendar>
                                   FloatingLabelBehavior.always,
                               controller: controller1,
                               onTap: () {
+                                selectFrom = true;
                                 widget.focusListener(false);
                                 Future.microtask(
                                   () => widget.focusListener(true),
@@ -504,6 +563,15 @@ class _RangeCalendarState extends State<RangeCalendar>
                               labelText: 'To',
                               hintText: 'dd/mm/yyyy',
                               onChanged: (value) {
+                                if (value.length == 10) {
+                                  selectEndDate(
+                                    DateTime(
+                                      int.parse(value.substring(6, 10)),
+                                      int.parse(value.substring(3, 5)),
+                                      int.parse(value.substring(0, 2)),
+                                    ),
+                                  );
+                                }
                                 controller2.updateText(value);
                                 controller2.selection =
                                     TextSelection.fromPosition(TextPosition(
@@ -511,6 +579,7 @@ class _RangeCalendarState extends State<RangeCalendar>
                               },
                               controller: controller2,
                               onTap: () {
+                                selectFrom = false;
                                 widget.focusListener(false);
                                 Future.microtask(
                                   () => widget.focusListener(true),
@@ -522,7 +591,12 @@ class _RangeCalendarState extends State<RangeCalendar>
                           Spacer(),
                           CommonButton.withIcon(
                             'Clear',
-                            onPressed: () {},
+                            onPressed: () {
+                              selectStartDate(widget.firstDate);
+                              selectEndDate(widget.firstDate);
+                              controller1.clear();
+                              controller2.clear();
+                            },
                             type: CommonButtonType.Outlined,
                             fontWeight: FontWeight.w600,
                             icon: AppIcons.x,
@@ -530,7 +604,9 @@ class _RangeCalendarState extends State<RangeCalendar>
                           SizedBox(width: 16),
                           CommonButton.withIcon(
                             'Apply',
-                            onPressed: () {},
+                            onPressed: () {
+                              widget.overlayEntry.remove();
+                            },
                             fontWeight: FontWeight.w600,
                             icon: AppIcons.check,
                           ),
@@ -550,11 +626,11 @@ class _RangeCalendarState extends State<RangeCalendar>
 
   Widget calendar({DateTime date}) {
     monthFirstDate = DateTime(date.year, date.month);
-    maxDay = DateTime(startYear, startMonth + 1, 0).day;
+    maxDay = DateTime(date.year, date.month + 1, 0).day;
     int number = -monthFirstDate.weekday;
     if (number == -7) number = 0;
     return SizedBox(
-      width: 260,
+      width: 259,
       height: 220,
       child: Column(
         children: [
@@ -571,7 +647,7 @@ class _RangeCalendarState extends State<RangeCalendar>
                       7,
                       (index) {
                         number++;
-                        return rangeCalendarNumber(date, number);
+                        return rangeCalendarNumber(date, number, index);
                       },
                     ),
                   ),
@@ -584,38 +660,79 @@ class _RangeCalendarState extends State<RangeCalendar>
     );
   }
 
-  Widget rangeCalendarNumber(DateTime date, int index) {
+  Widget rangeCalendarNumber(DateTime date, int day, int index) {
     return Container(
-      width: 30,
+      width: 37,
       height: 30,
-      child: index < 1 || index > maxDay
+      child: day < 1 || day > maxDay
           ? SizedBox()
           : TextButton(
               onPressed: () {
                 setState(() {
-                  widget.select(DateTime(date.year, date.month, index));
+                  focusScopeNode.unfocus();
+                  if (selectFrom) {
+                    selectStartDate(DateTime(date.year, date.month, day));
+                    selectFrom = false;
+                  } else
+                    selectEndDate(DateTime(date.year, date.month, day));
                 });
               },
               style: TextButton.styleFrom(
-                primary:
-                    // selectedNum == index
-                    //     ? AppColors.WHITE
-                    // :
-                    AppColors.BLACK,
+                primary: DateTime(date.year, date.month, day + 1)
+                            .isAfter(selectedStartDate) &&
+                        DateTime(date.year, date.month, day - 1)
+                            .isBefore(selectedEndDate)
+                    ? AppColors.WHITE
+                    : AppColors.BLACK,
                 padding: EdgeInsets.zero,
                 minimumSize: Size(30, 30),
                 fixedSize: Size(20, 20),
                 textStyle: TextStyle(color: AppColors.BLACK, fontSize: 16),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(100)),
-                backgroundColor:
-                    // selectedNum == index
-                    //     ? AppColors.ACCENT_MAIN
-                    // :
-                    AppColors.TRANSPARENT,
+                  borderRadius: BorderRadius.only(
+                    topLeft: DateTime(date.year, date.month, day)
+                                .isAfter(selectedStartDate) &&
+                            DateTime(date.year, date.month, day - 1)
+                                .isBefore(selectedEndDate) &&
+                            index != 0 &&
+                            day != 1
+                        ? Radius.circular(0)
+                        : Radius.circular(100),
+                    bottomLeft: DateTime(date.year, date.month, day)
+                                .isAfter(selectedStartDate) &&
+                            DateTime(date.year, date.month, day - 1)
+                                .isBefore(selectedEndDate) &&
+                            index != 0 &&
+                            day != 1
+                        ? Radius.circular(0)
+                        : Radius.circular(100),
+                    topRight: DateTime(date.year, date.month, day + 1)
+                                .isAfter(selectedStartDate) &&
+                            DateTime(date.year, date.month, day)
+                                .isBefore(selectedEndDate) &&
+                            index != 6 &&
+                            day != maxDay
+                        ? Radius.circular(0)
+                        : Radius.circular(100),
+                    bottomRight: DateTime(date.year, date.month, day + 1)
+                                .isAfter(selectedStartDate) &&
+                            DateTime(date.year, date.month, day)
+                                .isBefore(selectedEndDate) &&
+                            index != 6 &&
+                            day != maxDay
+                        ? Radius.circular(0)
+                        : Radius.circular(100),
+                  ),
+                ),
+                backgroundColor: DateTime(date.year, date.month, day + 1)
+                            .isAfter(selectedStartDate) &&
+                        DateTime(date.year, date.month, day - 1)
+                            .isBefore(selectedEndDate)
+                    ? AppColors.ACCENT_MAIN
+                    : AppColors.TRANSPARENT,
               ),
               child: Text(
-                '$index',
+                '$day',
               ),
             ),
     );
