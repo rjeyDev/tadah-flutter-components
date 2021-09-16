@@ -156,5 +156,6 @@ class AppColors {
   static const Color BUTTON_BACKGROUND_COMMON_LIGHT = BLUE_VIOLET_500;
   static const Color BUTTON_BACKGROUND_COMMON_DARK = BLUE_VIOLET_500;
 
+  static const Color SNACKBAR_BACKGROUND = Color(0xFF2B1657);
   static const Color ACCENT_MAIN = BLUE_VIOLET_500;
 }
