@@ -61,14 +61,11 @@ class AppWidgetStyles {
   static double getResponsiveWidth(double width) => getResponsiveSize(width);
 
   static BoxShadow basicBoxShadow({
-    @required BuildContext context,
     Color color,
     Offset offset,
     double blurRadius,
     double spreadRadius,
   }) {
-    assert(context != null || color != null);
-
     Color _color = color ?? AppColors.BLACK_8;
     Offset _offset = offset ?? const Offset(0.0, 4.0);
     double _blurRadius = blurRadius ?? 24.0;
@@ -82,70 +79,50 @@ class AppWidgetStyles {
     );
   }
 
-  static List<BoxShadow> commonButtonShadow({@required BuildContext context}) {
-    return [
-      BoxShadow(
-        color: AppColors.COMMON_BUTTON_SHADOW_54_LIGHT,
-        offset: Offset(0, 8),
-        blurRadius: 32,
-      ),
-    ];
-  }
+  static List<BoxShadow> commonButtonShadow = [
+    BoxShadow(
+      color: AppColors.COMMON_BUTTON_SHADOW_54_LIGHT,
+      offset: Offset(0, 8),
+      blurRadius: 32,
+    ),
+  ];
 
-  static List<BoxShadow> imageCardBoxShadow({
-    @required BuildContext context,
-  }) {
-    assert(context != null);
+  static List<BoxShadow> imageCardBoxShadow = [
+    BoxShadow(
+      color: AppColors.SHADOW_54_LIGHT,
+      offset: Offset(0, 4),
+      blurRadius: 24,
+      spreadRadius: 0,
+    ),
+    BoxShadow(
+      color: AppColors.SHADOW_16_LIGHT,
+      offset: Offset(0, 2),
+      blurRadius: 16,
+      spreadRadius: 0,
+    ),
+  ];
 
-    return [
-      BoxShadow(
-        color: AppColors.SHADOW_54_LIGHT,
-        offset: Offset(0, 4),
-        blurRadius: 24,
-        spreadRadius: 0,
-      ),
-      BoxShadow(
-        color: AppColors.SHADOW_16_LIGHT,
-        offset: Offset(0, 2),
-        blurRadius: 16,
-        spreadRadius: 0,
-      ),
-    ];
-  }
+  static List<BoxShadow> cardBoxShadow = [
+    BoxShadow(
+      color: AppColors.SHADOW_16_LIGHT,
+      offset: Offset(0, 8),
+      blurRadius: 32,
+      spreadRadius: 0,
+    ),
+    BoxShadow(
+      color: AppColors.SHADOW_16_LIGHT,
+      offset: Offset(0, 8),
+      blurRadius: 24,
+      spreadRadius: 0,
+    ),
+  ];
 
-  static List<BoxShadow> cardBoxShadow({
-    @required BuildContext context,
-  }) {
-    assert(context != null);
-
-    return [
-      BoxShadow(
-        color: AppColors.SHADOW_16_LIGHT,
-        offset: Offset(0, 8),
-        blurRadius: 32,
-        spreadRadius: 0,
-      ),
-      BoxShadow(
-        color: AppColors.SHADOW_16_LIGHT,
-        offset: Offset(0, 8),
-        blurRadius: 24,
-        spreadRadius: 0,
-      ),
-    ];
-  }
-
-  static List<BoxShadow> dropdownBoxShadow({
-    @required BuildContext context,
-  }) {
-    assert(context != null);
-
-    return [
-      BoxShadow(
-        color: AppColors.SHADOW_24_LIGHT,
-        offset: Offset(0, 4),
-        blurRadius: 24,
-        spreadRadius: 0,
-      ),
-    ];
-  }
+  static List<BoxShadow> dropdownBoxShadow = [
+    BoxShadow(
+      color: AppColors.SHADOW_24_LIGHT,
+      offset: Offset(0, 4),
+      blurRadius: 24,
+      spreadRadius: 0,
+    ),
+  ];
 }

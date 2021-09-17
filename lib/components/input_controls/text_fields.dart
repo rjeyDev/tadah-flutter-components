@@ -14,7 +14,7 @@ class BasicTextInput extends StatefulWidget {
 
   const BasicTextInput({
     Key key,
-    this.controller,
+    @required this.controller,
     this.hintText,
     this.labelText,
     this.helpText,

@@ -305,7 +305,7 @@ class _CommonButtonState extends State<CommonButton> {
     return widget.type == CommonButtonType.Primary &&
             !pressed &&
             (focused || hovered)
-        ? AppWidgetStyles.commonButtonShadow(context: context)
+        ? AppWidgetStyles.commonButtonShadow
         : [];
   }
 
@@ -367,7 +367,7 @@ class _CommonButtonState extends State<CommonButton> {
                 },
                 child: GestureDetector(
                   onTap: () {
-                    if (!widget.loading) {
+                    if (!widget.loading && !disabled) {
                       widget.onPressed();
                       setState(() {
                         pressed = true;
