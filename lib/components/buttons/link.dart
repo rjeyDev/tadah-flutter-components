@@ -1,5 +1,5 @@
 // @dart=2.9
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:tadah_flutter_components/components/buttons/touchable_opacity/index.dart';
 import 'package:tadah_flutter_components/tadah_flutter_components.dart';
 

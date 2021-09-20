@@ -38,65 +38,69 @@ class _AppChipState extends State<AppChip> {
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: ThemeData(
-        splashColor: AppColors.TRANSPARENT,
-        hoverColor: AppColors.BLUE_VIOLET_500_8,
-        focusColor: AppColors.BLUE_VIOLET_500_16,
-        highlightColor: AppColors.BLUE_VIOLET_500_24,
-      ),
-      child: RawChip(
-        isEnabled: widget.enabled,
-        focusNode: widget.focusNode ?? FocusNode(),
-        autofocus: widget.autofocus,
-        selected: widget.selected,
-        avatar: widget.avatar,
-        showCheckmark: widget.avatar != null,
-        checkmarkColor: AppColors.WHITE,
-        onSelected: widget.onSelected,
-        onDeleted: widget.onDeleted,
-        pressElevation: 0,
-        label: widget.label,
-        disabledColor: AppColors.TRANSPARENT,
-        labelStyle: AppTextStyles.styleFrom(
-          context: context,
-          style: TextStyles.SECONDARY,
-          color: disabled ? AppColors.BLACK_54 : AppColors.BLACK,
+    return Material(
+      color: AppColors.TRANSPARENT,
+      child: Theme(
+        data: ThemeData(
+          splashColor: AppColors.TRANSPARENT,
+          hoverColor: AppColors.BLUE_VIOLET_500_8,
+          focusColor: AppColors.BLUE_VIOLET_500_16,
+          highlightColor: AppColors.BLUE_VIOLET_500_24,
         ),
-        labelPadding: widget.onDeleted == null
-            ? EdgeInsets.symmetric(horizontal: 8, vertical: 2)
-            : EdgeInsets.fromLTRB(4, 2, 4, 2),
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-            color: disabled
-                ? AppColors.BLACK_24_WO
-                : widget.selected
-                    ? AppColors.BLUE_VIOLET_500
-                    : AppColors.COOL_GRAY_500_54,
-            width: 1.5,
+        child: RawChip(
+          isEnabled: widget.enabled,
+          focusNode: widget.focusNode ?? FocusNode(),
+          autofocus: widget.autofocus,
+          selected: widget.selected,
+          avatar: widget.avatar,
+          showCheckmark: widget.avatar != null,
+          checkmarkColor: AppColors.WHITE,
+          onSelected: widget.onSelected,
+          onDeleted: widget.onDeleted,
+          pressElevation: 0,
+          label: widget.label,
+          disabledColor: AppColors.TRANSPARENT,
+          labelStyle: AppTextStyles.styleFrom(
+            context: context,
+            style: TextStyles.SECONDARY,
+            color: disabled ? AppColors.BLACK_54 : AppColors.BLACK,
           ),
-          borderRadius: BorderRadius.circular(40),
-        ),
-        selectedColor: AppColors.TRANSPARENT,
-        backgroundColor: widget.selected
-            ? AppColors.BLUE_VIOLET_500_8
-            : AppColors.TRANSPARENT,
-        deleteIcon: AnimatedContainer(
-          duration: Duration(milliseconds: 50),
-          padding: EdgeInsets.all(5),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: disabled
-                ? AppColors.BLACK_16
-                : widget.selected
-                    ? AppColors.BLUE_VIOLET_500_16
-                    : AppColors.BLACK_8,
+          labelPadding: widget.onDeleted == null
+              ? EdgeInsets.symmetric(horizontal: 8, vertical: 2)
+              : EdgeInsets.fromLTRB(4, 2, 4, 2),
+          shape: RoundedRectangleBorder(
+            side: BorderSide(
+              color: disabled
+                  ? AppColors.BLACK_24_WO
+                  : widget.selected
+                      ? AppColors.BLUE_VIOLET_500
+                      : AppColors.COOL_GRAY_500_54,
+              width: 1.5,
+            ),
+            borderRadius: BorderRadius.circular(40),
           ),
-          child: Icon(
-            Icons.close_rounded,
-            color:
-                widget.selected ? AppColors.ACCENT_MAIN : AppColors.BLACK_54_WO,
-            size: 16,
+          selectedColor: AppColors.TRANSPARENT,
+          backgroundColor: widget.selected
+              ? AppColors.BLUE_VIOLET_500_8
+              : AppColors.TRANSPARENT,
+          deleteIcon: AnimatedContainer(
+            duration: Duration(milliseconds: 50),
+            padding: EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: disabled
+                  ? AppColors.BLACK_16
+                  : widget.selected
+                      ? AppColors.BLUE_VIOLET_500_16
+                      : AppColors.BLACK_8,
+            ),
+            child: Icon(
+              Icons.close_rounded,
+              color: widget.selected
+                  ? AppColors.ACCENT_MAIN
+                  : AppColors.BLACK_54_WO,
+              size: 16,
+            ),
           ),
         ),
       ),

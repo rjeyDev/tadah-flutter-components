@@ -1,5 +1,6 @@
 // @dart=2.9
-import 'package:flutter/material.dart';
+// import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:tadah_flutter_components/components/buttons/common_loader/index.dart';
 import 'package:tadah_flutter_components/theme/app_colors.dart';
@@ -408,7 +409,7 @@ class _CommonButtonState extends State<CommonButton> {
                         ? widget.padding
                         : _contentPadding(context),
                     decoration: BoxDecoration(
-                      color: Colors.transparent,
+                      color: AppColors.TRANSPARENT,
                       borderRadius:
                           new BorderRadius.circular(CommonButton._borderRadius),
                       border: Border.fromBorderSide(_border(context)),
@@ -454,32 +455,5 @@ class _CommonButtonState extends State<CommonButton> {
 
   Widget build(BuildContext context) {
     return widget.wide ? _button(context) : FittedBox(child: _button(context));
-    // ElevatedButton(
-    //   onPressed: () {},
-    //   child: Text('Press me'),
-    //   style: ButtonStyle(
-    //     backgroundColor: MaterialStateProperty.all(AppColors.ACCENT_MAIN),
-    //     elevation: MaterialStateProperty.resolveWith((states) {
-    //       if (states.contains(MaterialState.hovered)) return 8;
-    //       return 0;
-    //     }),
-    //     shape: MaterialStateProperty.all(
-    //         RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-    //     shadowColor: MaterialStateProperty.resolveWith(
-    //       (states) {
-    //         if (states.contains(MaterialState.pressed))
-    //           return AppColors.TRANSPARENT;
-    //         return AppColors.BLUE_VIOLET_500;
-    //       },
-    //     ),
-    //     overlayColor: MaterialStateProperty.resolveWith(
-    //       (states) {
-    //         if (states.contains(MaterialState.pressed))
-    //           return AppColors.BLACK_24;
-    //         return AppColors.TRANSPARENT;
-    //       },
-    //     ),
-    //   ),
-    // );
   }
 }

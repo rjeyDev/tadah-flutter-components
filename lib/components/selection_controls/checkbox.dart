@@ -54,39 +54,42 @@ class _AppCheckBoxState extends State<AppCheckBox> {
   bool state = false;
   @override
   Widget build(BuildContext context) {
-    return Checkbox(
-      value: widget.value,
-      onChanged: widget.onChanged,
-      focusNode: widget.focusNode ?? FocusNode(),
-      autofocus: widget.autofocus,
-      tristate: widget.tristate,
-      mouseCursor: widget.mouseCursor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4),
-        side: BorderSide(width: 1),
+    return Material(
+      color: AppColors.TRANSPARENT,
+      child: Checkbox(
+        value: widget.value,
+        onChanged: widget.onChanged,
+        focusNode: widget.focusNode ?? FocusNode(),
+        autofocus: widget.autofocus,
+        tristate: widget.tristate,
+        mouseCursor: widget.mouseCursor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4),
+          side: BorderSide(width: 1),
+        ),
+        materialTapTargetSize:
+            widget.materialTapTargetSize ?? MaterialTapTargetSize.shrinkWrap,
+        fillColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.disabled)) {
+            return AppColors.BLUE_VIOLET_500_16;
+          }
+          if (states.contains(MaterialState.selected) ||
+              states.contains(MaterialState.hovered) ||
+              states.contains(MaterialState.focused)) {
+            return widget.activeColor;
+          }
+          return AppColors.BLACK_16;
+        }),
+        overlayColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.focused)) return widget.focusColor;
+          if (states.contains(MaterialState.pressed)) {
+            return widget.pressColor;
+          }
+          return AppColors.TRANSPARENT;
+        }),
+        splashRadius: 10,
+        // hoverColor: AppColors.ACCENT_MAIN,
       ),
-      materialTapTargetSize:
-          widget.materialTapTargetSize ?? MaterialTapTargetSize.shrinkWrap,
-      fillColor: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.disabled)) {
-          return AppColors.BLUE_VIOLET_500_16;
-        }
-        if (states.contains(MaterialState.selected) ||
-            states.contains(MaterialState.hovered) ||
-            states.contains(MaterialState.focused)) {
-          return widget.activeColor;
-        }
-        return AppColors.BLACK_16;
-      }),
-      overlayColor: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.focused)) return widget.focusColor;
-        if (states.contains(MaterialState.pressed)) {
-          return widget.pressColor;
-        }
-        return AppColors.TRANSPARENT;
-      }),
-      splashRadius: 10,
-      // hoverColor: AppColors.ACCENT_MAIN,
     );
   }
 }

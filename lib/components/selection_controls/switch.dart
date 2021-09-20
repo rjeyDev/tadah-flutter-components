@@ -98,92 +98,95 @@ class _AppSwitchState extends State<AppSwitch>
 
   @override
   Widget build(BuildContext context) {
-    return Focus(
-      focusNode: widget.focusNode,
-      autofocus: widget.autoFocus,
-      onFocusChange: (value) {
-        setState(() {
-          focused = value;
-        });
-      },
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        onEnter: (event) {
+    return Material(
+      color: AppColors.TRANSPARENT,
+      child: Focus(
+        focusNode: widget.focusNode,
+        autofocus: widget.autoFocus,
+        onFocusChange: (value) {
           setState(() {
-            hovered = true;
+            focused = value;
           });
         },
-        onExit: (event) {
-          setState(() {
-            hovered = false;
-          });
-        },
-        child: GestureDetector(
-          onTap: () {
-            if (!disabled)
-              setState(() {
-                widget.onChanged(!widget.value);
-                !widget.value
-                    ? _animationController.forward()
-                    : _animationController.reverse();
-              });
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          onEnter: (event) {
+            setState(() {
+              hovered = true;
+            });
           },
-          onTapDown: (details) {
-            if (!disabled) {
-              setState(() {
-                pressed = true;
-                FocusScope.of(context).requestFocus(FocusNode());
-                // pressed = true;
-              });
-            }
+          onExit: (event) {
+            setState(() {
+              hovered = false;
+            });
           },
-          onTapUp: (details) {
-            if (!disabled) {
-              setState(() {
-                pressed = false;
-              });
-            }
-          },
-          onTapCancel: () {
-            if (!disabled) {
-              setState(() {
-                pressed = false;
-              });
-            }
-          },
-          child: Container(
-            width: 28,
-            height: 16,
-            child: Stack(
-              children: [
-                AnimatedContainer(
-                  duration: Duration(milliseconds: 200),
-                  alignment: Alignment.centerLeft,
-                  width: 28,
-                  height: 16,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(40),
-                    border: Border.all(width: 1.5, color: borderColor),
-                    color: trackColor,
+          child: GestureDetector(
+            onTap: () {
+              if (!disabled)
+                setState(() {
+                  widget.onChanged(!widget.value);
+                  !widget.value
+                      ? _animationController.forward()
+                      : _animationController.reverse();
+                });
+            },
+            onTapDown: (details) {
+              if (!disabled) {
+                setState(() {
+                  pressed = true;
+                  FocusScope.of(context).requestFocus(FocusNode());
+                  // pressed = true;
+                });
+              }
+            },
+            onTapUp: (details) {
+              if (!disabled) {
+                setState(() {
+                  pressed = false;
+                });
+              }
+            },
+            onTapCancel: () {
+              if (!disabled) {
+                setState(() {
+                  pressed = false;
+                });
+              }
+            },
+            child: Container(
+              width: 28,
+              height: 16,
+              child: Stack(
+                children: [
+                  AnimatedContainer(
+                    duration: Duration(milliseconds: 200),
+                    alignment: Alignment.centerLeft,
+                    width: 28,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(40),
+                      border: Border.all(width: 1.5, color: borderColor),
+                      color: trackColor,
+                    ),
                   ),
-                ),
-                Positioned(
-                  left: 0,
-                  top: 0,
-                  child: SlideTransition(
-                    position: _animation,
-                    child: AnimatedContainer(
-                      duration: Duration(milliseconds: 100),
-                      width: 16,
-                      height: 16,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: togglerColor,
+                  Positioned(
+                    left: 0,
+                    top: 0,
+                    child: SlideTransition(
+                      position: _animation,
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 100),
+                        width: 16,
+                        height: 16,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: togglerColor,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

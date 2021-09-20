@@ -134,105 +134,107 @@ class _DatePickerState extends State<DatePicker>
 
   @override
   Widget build(BuildContext context) {
-    // DropdownButton(items: []);
-    return CompositedTransformTarget(
-      link: _layerLink,
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        onEnter: (event) {
-          if (!disabled)
-            setState(() {
-              hovered = true;
-            });
-        },
-        onExit: (event) {
-          if (!disabled)
-            setState(() {
-              hovered = false;
-            });
-        },
-        child: Theme(
-          data: ThemeData(
-              colorScheme: ColorScheme.light(
-            primary: AppColors.BLACK,
-          )),
-          child: GestureDetector(
-            onTap: () {
-              if (!disabled) {
-                if (_focusNode.hasFocus)
-                  _focusNode.unfocus();
-                else
-                  _focusNode.requestFocus();
-              }
-            },
-            child: Container(
-              color: Colors.transparent,
-              child: IgnorePointer(
-                child: TextFormField(
-                  focusNode: _focusNode,
-                  readOnly: true,
-                  validator: widget.validator,
-                  enabled: !disabled,
-                  showCursor: false,
-                  onTap: () {},
-                  controller: textController,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(left: 12),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: hovered
-                              ? AppColors.BLACK_38_WO
-                              : AppColors.BLACK_8_WO,
-                          width: 1.5),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: hovered
-                              ? AppColors.BLACK_38_WO
-                              : AppColors.BLACK_8_WO,
-                          width: 1.5),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    errorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: AppColors.RED_PIGMENT_500, width: 1.5),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: AppColors.ACCENT_MAIN, width: 1.5),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    disabledBorder: OutlineInputBorder(
-                      borderSide:
-                          BorderSide(color: AppColors.BLACK_8_WO, width: 1.5),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    focusedErrorBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          color: AppColors.RED_PIGMENT_500, width: 1.5),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    suffixIcon: RotationTransition(
-                      turns: animation,
-                      child: Icon(
-                        AppIcons.caret_down_mini,
-                        color: _focusNode.hasFocus
-                            ? AppColors.ACCENT_MAIN
-                            : AppColors.BLACK_38_WO,
+    return Material(
+      color: AppColors.TRANSPARENT,
+      child: CompositedTransformTarget(
+        link: _layerLink,
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          onEnter: (event) {
+            if (!disabled)
+              setState(() {
+                hovered = true;
+              });
+          },
+          onExit: (event) {
+            if (!disabled)
+              setState(() {
+                hovered = false;
+              });
+          },
+          child: Theme(
+            data: ThemeData(
+                colorScheme: ColorScheme.light(
+              primary: AppColors.BLACK,
+            )),
+            child: GestureDetector(
+              onTap: () {
+                if (!disabled) {
+                  if (_focusNode.hasFocus)
+                    _focusNode.unfocus();
+                  else
+                    _focusNode.requestFocus();
+                }
+              },
+              child: Container(
+                color: Colors.transparent,
+                child: IgnorePointer(
+                  child: TextFormField(
+                    focusNode: _focusNode,
+                    readOnly: true,
+                    validator: widget.validator,
+                    enabled: !disabled,
+                    showCursor: false,
+                    onTap: () {},
+                    controller: textController,
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.only(left: 12),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: hovered
+                                ? AppColors.BLACK_38_WO
+                                : AppColors.BLACK_8_WO,
+                            width: 1.5),
+                        borderRadius: BorderRadius.circular(8),
                       ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: hovered
+                                ? AppColors.BLACK_38_WO
+                                : AppColors.BLACK_8_WO,
+                            width: 1.5),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: AppColors.RED_PIGMENT_500, width: 1.5),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: AppColors.ACCENT_MAIN, width: 1.5),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      disabledBorder: OutlineInputBorder(
+                        borderSide:
+                            BorderSide(color: AppColors.BLACK_8_WO, width: 1.5),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      focusedErrorBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: AppColors.RED_PIGMENT_500, width: 1.5),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      suffixIcon: RotationTransition(
+                        turns: animation,
+                        child: Icon(
+                          AppIcons.caret_down_mini,
+                          color: _focusNode.hasFocus
+                              ? AppColors.ACCENT_MAIN
+                              : AppColors.BLACK_38_WO,
+                        ),
+                      ),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.only(left: 12, right: 12),
+                        child: widget.prefix ?? Icon(AppIcons.calendar),
+                      ),
+                      prefixIconConstraints: BoxConstraints(
+                        minWidth: 16,
+                        maxHeight: 50,
+                      ),
+                      labelText: widget.label,
+                      helperText: widget.helpText,
                     ),
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.only(left: 12, right: 12),
-                      child: widget.prefix ?? Icon(AppIcons.calendar),
-                    ),
-                    prefixIconConstraints: BoxConstraints(
-                      minWidth: 16,
-                      maxHeight: 50,
-                    ),
-                    labelText: widget.label,
-                    helperText: widget.helpText,
                   ),
                 ),
               ),

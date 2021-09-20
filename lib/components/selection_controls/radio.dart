@@ -53,139 +53,144 @@ class _RadioButtonState extends State<RadioButton> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.type == RadioButtonType.classic
-        ? Radio(
-            value: widget.value,
-            groupValue: widget.groupValue,
-            onChanged: widget.onChanged,
-            mouseCursor: widget.mouseCursor,
-            toggleable: widget.toggleable,
-            fillColor: MaterialStateProperty.resolveWith((states) {
-              if (states.contains(MaterialState.disabled)) {
-                return AppColors.BLACK_8;
-              }
-              if (states.contains(MaterialState.selected) ||
-                  states.contains(MaterialState.hovered) ||
-                  states.contains(MaterialState.focused)) {
-                return widget.activeColor;
-              }
-              return AppColors.BLACK_16;
-            }),
-            overlayColor: MaterialStateProperty.resolveWith((states) {
-              if (states.contains(MaterialState.disabled))
+    return Material(
+      color: AppColors.TRANSPARENT,
+      child: widget.type == RadioButtonType.classic
+          ? Radio(
+              value: widget.value,
+              groupValue: widget.groupValue,
+              onChanged: widget.onChanged,
+              mouseCursor: widget.mouseCursor,
+              toggleable: widget.toggleable,
+              fillColor: MaterialStateProperty.resolveWith((states) {
+                if (states.contains(MaterialState.disabled)) {
+                  return AppColors.BLACK_8;
+                }
+                if (states.contains(MaterialState.selected) ||
+                    states.contains(MaterialState.hovered) ||
+                    states.contains(MaterialState.focused)) {
+                  return widget.activeColor;
+                }
+                return AppColors.BLACK_16;
+              }),
+              overlayColor: MaterialStateProperty.resolveWith((states) {
+                if (states.contains(MaterialState.disabled))
+                  return AppColors.TRANSPARENT;
+                if (states.contains(MaterialState.focused))
+                  return widget.focusColor;
+                if (states.contains(MaterialState.pressed)) {
+                  return widget.pressColor;
+                }
                 return AppColors.TRANSPARENT;
-              if (states.contains(MaterialState.focused))
-                return widget.focusColor;
-              if (states.contains(MaterialState.pressed)) {
-                return widget.pressColor;
-              }
-              return AppColors.TRANSPARENT;
-            }),
-            splashRadius: widget.splashRadius,
-            materialTapTargetSize: widget.materialTapTargetSize,
-            focusNode: widget.focusNode ?? FocusNode(),
-            autofocus: widget.autofocus,
-          )
-        : MouseRegion(
-            cursor:
-                disabled ? SystemMouseCursors.basic : SystemMouseCursors.click,
-            onEnter: (event) {
-              if (!disabled)
-                setState(() {
-                  hovered = true;
-                });
-            },
-            onExit: (event) {
-              if (!disabled)
-                setState(() {
-                  hovered = false;
-                });
-            },
-            child: GestureDetector(
-              onTap: () {
-                if (!disabled) widget.onChanged(widget.value);
-              },
-              onTapDown: (details) {
+              }),
+              splashRadius: widget.splashRadius,
+              materialTapTargetSize: widget.materialTapTargetSize,
+              focusNode: widget.focusNode ?? FocusNode(),
+              autofocus: widget.autofocus,
+            )
+          : MouseRegion(
+              cursor: disabled
+                  ? SystemMouseCursors.basic
+                  : SystemMouseCursors.click,
+              onEnter: (event) {
                 if (!disabled)
                   setState(() {
-                    pressed = true;
+                    hovered = true;
                   });
               },
-              onTapUp: (details) {
+              onExit: (event) {
                 if (!disabled)
                   setState(() {
-                    pressed = false;
+                    hovered = false;
                   });
               },
-              onTapCancel: () {
-                if (!disabled)
-                  setState(() {
-                    pressed = false;
-                  });
-              },
-              child: AnimatedContainer(
-                duration: Duration(milliseconds: 100),
-                padding: EdgeInsets.fromLTRB(8, 8, 16, 8),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: !disabled && pressed
-                      ? AppColors.BLUE_VIOLET_500_24
-                      : AppColors.TRANSPARENT,
-                  border: Border.all(
-                    width: 1.5,
-                    color: disabled
-                        ? AppColors.BLACK_8
-                        : pressed || hovered
-                            ? AppColors.ACCENT_MAIN
-                            : AppColors.BLACK_8,
+              child: GestureDetector(
+                onTap: () {
+                  if (!disabled) widget.onChanged(widget.value);
+                },
+                onTapDown: (details) {
+                  if (!disabled)
+                    setState(() {
+                      pressed = true;
+                    });
+                },
+                onTapUp: (details) {
+                  if (!disabled)
+                    setState(() {
+                      pressed = false;
+                    });
+                },
+                onTapCancel: () {
+                  if (!disabled)
+                    setState(() {
+                      pressed = false;
+                    });
+                },
+                child: AnimatedContainer(
+                  duration: Duration(milliseconds: 100),
+                  padding: EdgeInsets.fromLTRB(8, 8, 16, 8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: !disabled && pressed
+                        ? AppColors.BLUE_VIOLET_500_24
+                        : AppColors.TRANSPARENT,
+                    border: Border.all(
+                      width: 1.5,
+                      color: disabled
+                          ? AppColors.BLACK_8
+                          : pressed || hovered
+                              ? AppColors.ACCENT_MAIN
+                              : AppColors.BLACK_8,
+                    ),
                   ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Radio(
-                      value: widget.value,
-                      fillColor: MaterialStateProperty.resolveWith((states) {
-                        if (states.contains(MaterialState.disabled)) {
-                          return AppColors.BLACK_8;
-                        }
-                        if (states.contains(MaterialState.selected) ||
-                            states.contains(MaterialState.hovered) ||
-                            states.contains(MaterialState.focused)) {
-                          return widget.activeColor;
-                        }
-                        return AppColors.BLACK_16;
-                      }),
-                      overlayColor: MaterialStateProperty.resolveWith((states) {
-                        if (states.contains(MaterialState.disabled))
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Radio(
+                        value: widget.value,
+                        fillColor: MaterialStateProperty.resolveWith((states) {
+                          if (states.contains(MaterialState.disabled)) {
+                            return AppColors.BLACK_8;
+                          }
+                          if (states.contains(MaterialState.selected) ||
+                              states.contains(MaterialState.hovered) ||
+                              states.contains(MaterialState.focused)) {
+                            return widget.activeColor;
+                          }
+                          return AppColors.BLACK_16;
+                        }),
+                        overlayColor:
+                            MaterialStateProperty.resolveWith((states) {
+                          if (states.contains(MaterialState.disabled))
+                            return AppColors.TRANSPARENT;
+                          if (states.contains(MaterialState.focused))
+                            return widget.focusColor;
+                          if (states.contains(MaterialState.pressed)) {
+                            return widget.pressColor;
+                          }
                           return AppColors.TRANSPARENT;
-                        if (states.contains(MaterialState.focused))
-                          return widget.focusColor;
-                        if (states.contains(MaterialState.pressed)) {
-                          return widget.pressColor;
-                        }
-                        return AppColors.TRANSPARENT;
-                      }),
-                      groupValue: widget.groupValue,
-                      autofocus: widget.autofocus,
-                      splashRadius: widget.splashRadius,
-                      materialTapTargetSize: widget.materialTapTargetSize,
-                      onChanged: widget.onChanged,
-                    ),
-                    Text(
-                      widget.label,
-                      style: AppTextStyles.styleFrom(
-                        context: context,
-                        style: TextStyles.SECONDARY,
-                        color: disabled
-                            ? AppColors.BLUE_VIOLET_500_38
-                            : AppColors.ACCENT_MAIN,
+                        }),
+                        groupValue: widget.groupValue,
+                        autofocus: widget.autofocus,
+                        splashRadius: widget.splashRadius,
+                        materialTapTargetSize: widget.materialTapTargetSize,
+                        onChanged: widget.onChanged,
                       ),
-                    ),
-                  ],
+                      Text(
+                        widget.label,
+                        style: AppTextStyles.styleFrom(
+                          context: context,
+                          style: TextStyles.SECONDARY,
+                          color: disabled
+                              ? AppColors.BLUE_VIOLET_500_38
+                              : AppColors.ACCENT_MAIN,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          );
+    );
   }
 }

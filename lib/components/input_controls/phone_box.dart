@@ -32,6 +32,7 @@ class PhoneBox extends StatefulWidget {
     this.onChanged,
     this.onSaved,
     this.validator,
+    this.enableSuffix = true,
   }) : super(key: key);
 
   final List<CountryCode> countries;
@@ -42,6 +43,7 @@ class PhoneBox extends StatefulWidget {
   final ValueChanged<String> onChanged;
   final ValueChanged<String> onSaved;
   final String Function(String) validator;
+  final bool enableSuffix;
 
   @override
   _PhoneBoxState createState() => _PhoneBoxState();
@@ -131,178 +133,190 @@ class _PhoneBoxState extends State<PhoneBox>
 
   @override
   Widget build(BuildContext context) {
-    return CompositedTransformTarget(
-      link: _layerLink,
-      child: MouseRegion(
-        cursor: SystemMouseCursors.text,
-        onEnter: (event) {
-          setState(() {
-            hovered = true;
-          });
-        },
-        onExit: (event) {
-          setState(() {
-            hovered = false;
-          });
-        },
-        child: Theme(
-          data: ThemeData(
-              colorScheme: ColorScheme.light(
-            primary: AppColors.BLACK,
-          )),
-          child: TextFormField(
-            onChanged: widget.onChanged,
-            onSaved: widget.onSaved,
-            validator: widget.validator,
-            enabled: !disabled,
-            controller: textController,
-            keyboardType: TextInputType.phone,
-            focusNode: _focusNode,
-            maxLengthEnforcement: MaxLengthEnforcement.enforced,
-            cursorRadius: Radius.circular(PhoneBox._cursorRadius),
-            cursorWidth: PhoneBox._cursorWidth,
-            cursorHeight: PhoneBox._cursorHeight,
-            cursorColor: AppTheme.of(context).accentMain,
-            style: AppTextStyles.styleFrom(
-              context: context,
-              fontSize: widget.fontSize,
-              style: TextStyles.SECONDARY,
-              color: AppColors.TEXT_PRIMARY_LIGHT,
-              // height: 1.4,
-            ),
-            inputFormatters: [
-              LengthLimitingTextInputFormatter(20),
-            ],
-            decoration: InputDecoration(
+    return Material(
+      color: AppColors.TRANSPARENT,
+      child: CompositedTransformTarget(
+        link: _layerLink,
+        child: MouseRegion(
+          cursor: SystemMouseCursors.text,
+          onEnter: (event) {
+            setState(() {
+              hovered = true;
+            });
+          },
+          onExit: (event) {
+            setState(() {
+              hovered = false;
+            });
+          },
+          child: Theme(
+            data: ThemeData(
+                colorScheme: ColorScheme.light(
+              primary: AppColors.BLACK,
+            )),
+            child: TextFormField(
+              onChanged: widget.onChanged,
+              onSaved: widget.onSaved,
+              validator: widget.validator,
               enabled: !disabled,
-              filled: false,
-              contentPadding: const EdgeInsets.fromLTRB(12, 18, 12, 18),
-              // isDense: true,
-              helperText: widget.helpText,
-              suffixIconConstraints: BoxConstraints(
-                maxWidth: 20,
-                minWidth: 20,
+              controller: textController,
+              keyboardType: TextInputType.phone,
+              focusNode: _focusNode,
+              maxLengthEnforcement: MaxLengthEnforcement.enforced,
+              cursorRadius: Radius.circular(PhoneBox._cursorRadius),
+              cursorWidth: PhoneBox._cursorWidth,
+              cursorHeight: PhoneBox._cursorHeight,
+              cursorColor: AppTheme.of(context).accentMain,
+              style: AppTextStyles.styleFrom(
+                context: context,
+                fontSize: widget.fontSize,
+                style: TextStyles.SECONDARY,
+                color: AppColors.TEXT_PRIMARY_LIGHT,
               ),
-              prefixIconConstraints: BoxConstraints(
-                maxWidth: 75,
-                minWidth: 40,
-              ),
-              prefixStyle: TextStyle(fontSize: 16),
-              prefixText: selectedCountry.countryCode + ' ',
-              prefixIcon: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: GestureDetector(
-                  onTap: () {
-                    toggleOverlay();
-                  },
-                  child: Row(
-                    children: [
-                      SizedBox(width: 12),
-                      Container(
-                          width: 20,
-                          height: 20,
-                          child: ClipRRect(
-                              borderRadius: BorderRadius.circular(100),
-                              child: selectedCountry.flagIcon)),
-                      SizedBox(width: 4),
-                      RotationTransition(
-                        turns: animation,
-                        child: Icon(
-                          AppIcons.caret_down_mini,
-                          color: _focusNode.hasFocus
-                              ? AppColors.ACCENT_MAIN
-                              : AppColors.BLACK_38_WO,
+              inputFormatters: [
+                LengthLimitingTextInputFormatter(20),
+              ],
+              decoration: InputDecoration(
+                enabled: !disabled,
+                filled: false,
+                contentPadding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+                // isDense: true,
+                helperText: widget.helpText,
+                suffixIconConstraints: BoxConstraints(
+                  maxWidth: 20,
+                  minWidth: 20,
+                ),
+                prefixIconConstraints: BoxConstraints(
+                  maxWidth: 75,
+                  minWidth: 40,
+                ),
+                prefixStyle: TextStyle(fontSize: 16),
+                prefixText: selectedCountry.countryCode + ' ',
+                prefixIcon: MouseRegion(
+                  cursor: SystemMouseCursors.click,
+                  child: GestureDetector(
+                    onTap: () {
+                      toggleOverlay();
+                    },
+                    child: Row(
+                      children: [
+                        SizedBox(width: 12),
+                        Container(
+                            width: 20,
+                            height: 20,
+                            child: ClipRRect(
+                                borderRadius: BorderRadius.circular(100),
+                                child: selectedCountry.flagIcon)),
+                        SizedBox(width: 4),
+                        RotationTransition(
+                          turns: animation,
+                          child: Icon(
+                            AppIcons.caret_down_mini,
+                            color: _focusNode.hasFocus
+                                ? AppColors.ACCENT_MAIN
+                                : AppColors.BLACK_38_WO,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 4),
-                      Container(
-                        width: 1,
-                        height: 24,
-                        color: AppColors.BLACK_8_WO,
-                      ),
-                    ],
+                        SizedBox(width: 4),
+                        Container(
+                          width: 1,
+                          height: 24,
+                          color: AppColors.BLACK_8_WO,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              suffix: ElevatedButton(
-                onPressed: () {
-                  textController.clear();
-                },
-                child: Icon(
-                  AppIcons.x_mini,
-                  color: AppColors.ACCENT_MAIN,
+                suffix: widget.enableSuffix
+                    ? ElevatedButton(
+                        onPressed: () {
+                          textController.clear();
+                        },
+                        child: Icon(
+                          AppIcons.x_mini,
+                          size: 20,
+                          color: AppColors.ACCENT_MAIN,
+                        ),
+                        style: ButtonStyle(
+                          minimumSize: MaterialStateProperty.all(Size(20, 20)),
+                          fixedSize: MaterialStateProperty.all(Size(20, 20)),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          padding: MaterialStateProperty.all(
+                              EdgeInsets.only(left: 0)),
+                          elevation: MaterialStateProperty.all(0),
+                          backgroundColor: MaterialStateProperty.all(
+                              AppColors.BLUE_VIOLET_500_16_WO),
+                          shape: MaterialStateProperty.all(CircleBorder()),
+                        ),
+                      )
+                    : null,
+                counterStyle: AppTextStyles.styleFrom(
+                  context: context,
+                  style: TextStyles.NOTE,
+                  color: AppColors.BLACK_38_WO,
                 ),
-                style: ButtonStyle(
-                  minimumSize: MaterialStateProperty.all(Size(20, 20)),
-                  padding: MaterialStateProperty.all(EdgeInsets.only(left: 0)),
-                  elevation: MaterialStateProperty.all(0),
-                  backgroundColor: MaterialStateProperty.all(
-                      AppColors.BLUE_VIOLET_500_16_WO),
-                  shape: MaterialStateProperty.all(CircleBorder()),
+                // counterText: '${widget.controller.text.length}/${widget.maxLength}',
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: hovered
+                          ? AppColors.BLACK_38_WO
+                          : AppColors.BLACK_8_WO,
+                      width: 1.5),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-              ),
-              counterStyle: AppTextStyles.styleFrom(
-                context: context,
-                style: TextStyles.NOTE,
-                color: AppColors.BLACK_38_WO,
-              ),
-              // counterText: '${widget.controller.text.length}/${widget.maxLength}',
-              border: OutlineInputBorder(
-                borderSide: BorderSide(
-                    color:
-                        hovered ? AppColors.BLACK_38_WO : AppColors.BLACK_8_WO,
-                    width: 1.5),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
-                    color:
-                        hovered ? AppColors.BLACK_38_WO : AppColors.BLACK_8_WO,
-                    width: 1.5),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderSide:
-                    BorderSide(color: AppColors.RED_PIGMENT_500, width: 1.5),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderSide:
-                    BorderSide(color: AppColors.ACCENT_MAIN, width: 1.5),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              disabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: AppColors.BLACK_8_WO, width: 1.5),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              focusedErrorBorder: OutlineInputBorder(
-                borderSide:
-                    BorderSide(color: AppColors.RED_PIGMENT_500, width: 1.5),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              hintText: selectedCountry.mask,
-              labelText: widget.labelText,
-              alignLabelWithHint: true,
-              hintStyle: AppTextStyles.styleFrom(
-                context: context,
-                style: TextStyles.SECONDARY,
-                color: AppColors.BLACK_38_WO,
-              ),
-              helperStyle: AppTextStyles.styleFrom(
-                context: context,
-                style: TextStyles.NOTE,
-                color: AppColors.BLACK_38_WO,
-              ),
-              errorStyle: AppTextStyles.styleFrom(
-                context: context,
-                style: TextStyles.NOTE,
-                color: AppColors.RED_PIGMENT_500,
-              ),
-              labelStyle: AppTextStyles.styleFrom(
-                context: context,
-                style: TextStyles.SECONDARY,
-                color:
-                    _isFocused ? AppColors.ACCENT_MAIN : AppColors.BLACK_38_WO,
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: hovered
+                          ? AppColors.BLACK_38_WO
+                          : AppColors.BLACK_8_WO,
+                      width: 1.5),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderSide:
+                      BorderSide(color: AppColors.RED_PIGMENT_500, width: 1.5),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide:
+                      BorderSide(color: AppColors.ACCENT_MAIN, width: 1.5),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                disabledBorder: OutlineInputBorder(
+                  borderSide:
+                      BorderSide(color: AppColors.BLACK_8_WO, width: 1.5),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderSide:
+                      BorderSide(color: AppColors.RED_PIGMENT_500, width: 1.5),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                hintText: selectedCountry.mask,
+                labelText: widget.labelText,
+                alignLabelWithHint: true,
+                hintStyle: AppTextStyles.styleFrom(
+                  context: context,
+                  style: TextStyles.SECONDARY,
+                  color: AppColors.BLACK_38_WO,
+                ),
+                helperStyle: AppTextStyles.styleFrom(
+                  context: context,
+                  style: TextStyles.NOTE,
+                  color: AppColors.BLACK_38_WO,
+                ),
+                errorStyle: AppTextStyles.styleFrom(
+                  context: context,
+                  style: TextStyles.NOTE,
+                  color: AppColors.RED_PIGMENT_500,
+                ),
+                labelStyle: AppTextStyles.styleFrom(
+                  context: context,
+                  style: TextStyles.SECONDARY,
+                  color: _isFocused
+                      ? AppColors.ACCENT_MAIN
+                      : AppColors.BLACK_38_WO,
+                ),
               ),
             ),
           ),

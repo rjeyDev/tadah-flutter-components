@@ -34,31 +34,34 @@ class AppSlider extends StatefulWidget {
 class _AppSliderState extends State<AppSlider> {
   @override
   Widget build(BuildContext context) {
-    return SliderTheme(
-      data: SliderThemeData(
-        thumbColor: AppColors.ACCENT_MAIN,
-        activeTickMarkColor: AppColors.BLUE_VIOLET_500_8_WO,
-        inactiveTickMarkColor: AppColors.BLUE_VIOLET_500_38_WO,
-        disabledThumbColor: AppColors.BLACK_24_WO,
-        disabledActiveTrackColor: AppColors.BLACK_24_WO,
-        disabledInactiveTrackColor: AppColors.BLACK_8_WO,
-        activeTrackColor: AppColors.ACCENT_MAIN,
-        inactiveTrackColor: AppColors.BLUE_VIOLET_500_8_WO,
-        disabledActiveTickMarkColor: AppColors.BLACK_8_WO,
-        disabledInactiveTickMarkColor: AppColors.BLACK_24_WO,
-        overlayColor: AppColors.BLUE_VIOLET_500_16,
-        tickMarkShape: RoundSliderTickMarkShape(tickMarkRadius: 2),
-      ),
-      child: Slider(
-        focusNode: widget.focusNode ?? FocusNode(),
-        autofocus: widget.autofocus,
-        value: widget.value,
-        onChanged: widget.onChanged,
-        onChangeStart: widget.onChangeStart,
-        onChangeEnd: widget.onChangeEnd,
-        min: widget.min,
-        max: widget.max,
-        divisions: widget.divisions,
+    return Material(
+      color: AppColors.TRANSPARENT,
+      child: SliderTheme(
+        data: SliderThemeData(
+          thumbColor: AppColors.ACCENT_MAIN,
+          activeTickMarkColor: AppColors.BLUE_VIOLET_500_8_WO,
+          inactiveTickMarkColor: AppColors.BLUE_VIOLET_500_38_WO,
+          disabledThumbColor: AppColors.BLACK_24_WO,
+          disabledActiveTrackColor: AppColors.BLACK_24_WO,
+          disabledInactiveTrackColor: AppColors.BLACK_8_WO,
+          activeTrackColor: AppColors.ACCENT_MAIN,
+          inactiveTrackColor: AppColors.BLUE_VIOLET_500_8_WO,
+          disabledActiveTickMarkColor: AppColors.BLACK_8_WO,
+          disabledInactiveTickMarkColor: AppColors.BLACK_24_WO,
+          overlayColor: AppColors.BLUE_VIOLET_500_16,
+          tickMarkShape: RoundSliderTickMarkShape(tickMarkRadius: 2),
+        ),
+        child: Slider(
+          focusNode: widget.focusNode ?? FocusNode(),
+          autofocus: widget.autofocus,
+          value: widget.value,
+          onChanged: widget.onChanged,
+          onChangeStart: widget.onChangeStart,
+          onChangeEnd: widget.onChangeEnd,
+          min: widget.min,
+          max: widget.max,
+          divisions: widget.divisions,
+        ),
       ),
     );
   }

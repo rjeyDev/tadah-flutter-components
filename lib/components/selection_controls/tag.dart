@@ -38,57 +38,61 @@ class _TagState extends State<Tag> {
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: ThemeData(
-        splashColor: AppColors.TRANSPARENT,
-        hoverColor: AppColors.COOL_GRAY_500_24,
-        focusColor: AppColors.COOL_GRAY_500_38,
-        highlightColor: AppColors.COOL_GRAY_500_54,
-      ),
-      child: RawChip(
-        isEnabled: widget.enabled,
-        focusNode: widget.focusNode ?? FocusNode(),
-        autofocus: widget.autofocus,
-        selected: widget.selected,
-        avatar: widget.avatar,
-        showCheckmark: widget.avatar != null,
-        checkmarkColor: AppColors.WHITE,
-        onSelected: widget.onSelected,
-        onDeleted: widget.onDeleted,
-        pressElevation: 0,
-        label: widget.label,
-        disabledColor: AppColors.COOL_GRAY_500_8,
-        labelStyle: AppTextStyles.styleFrom(
-          context: context,
-          style: TextStyles.SECONDARY,
-          color: disabled
-              ? AppColors.BLACK_54
-              : widget.selected
-                  ? AppColors.WHITE
-                  : AppColors.BLACK,
+    return Material(
+      color: AppColors.TRANSPARENT,
+      child: Theme(
+        data: ThemeData(
+          splashColor: AppColors.TRANSPARENT,
+          hoverColor: AppColors.COOL_GRAY_500_24,
+          focusColor: AppColors.COOL_GRAY_500_38,
+          highlightColor: AppColors.COOL_GRAY_500_54,
         ),
-        labelPadding: widget.onDeleted == null
-            ? EdgeInsets.symmetric(horizontal: 8, vertical: 2)
-            : EdgeInsets.fromLTRB(4, 2, 4, 2),
-        selectedColor: AppColors.ACCENT_MAIN,
-        backgroundColor: widget.selected
-            ? AppColors.TRANSPARENT
-            : AppColors.COOL_GRAY_500_16,
-        deleteIcon: AnimatedContainer(
-          duration: Duration(milliseconds: 50),
-          padding: EdgeInsets.all(5),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
+        child: RawChip(
+          isEnabled: widget.enabled,
+          focusNode: widget.focusNode ?? FocusNode(),
+          autofocus: widget.autofocus,
+          selected: widget.selected,
+          avatar: widget.avatar,
+          showCheckmark: widget.avatar != null,
+          checkmarkColor: AppColors.WHITE,
+          onSelected: widget.onSelected,
+          onDeleted: widget.onDeleted,
+          pressElevation: 0,
+          label: widget.label,
+          disabledColor: AppColors.COOL_GRAY_500_8,
+          labelStyle: AppTextStyles.styleFrom(
+            context: context,
+            style: TextStyles.SECONDARY,
             color: disabled
-                ? AppColors.BLACK_16
+                ? AppColors.BLACK_54
                 : widget.selected
-                    ? AppColors.WHITE_16
-                    : AppColors.BLACK_8,
+                    ? AppColors.WHITE
+                    : AppColors.BLACK,
           ),
-          child: Icon(
-            Icons.close_rounded,
-            color: widget.selected ? AppColors.WHITE_54 : AppColors.BLACK_54_WO,
-            size: 16,
+          labelPadding: widget.onDeleted == null
+              ? EdgeInsets.symmetric(horizontal: 8, vertical: 2)
+              : EdgeInsets.fromLTRB(4, 2, 4, 2),
+          selectedColor: AppColors.ACCENT_MAIN,
+          backgroundColor: widget.selected
+              ? AppColors.TRANSPARENT
+              : AppColors.COOL_GRAY_500_16,
+          deleteIcon: AnimatedContainer(
+            duration: Duration(milliseconds: 50),
+            padding: EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: disabled
+                  ? AppColors.BLACK_16
+                  : widget.selected
+                      ? AppColors.WHITE_16
+                      : AppColors.BLACK_8,
+            ),
+            child: Icon(
+              Icons.close_rounded,
+              color:
+                  widget.selected ? AppColors.WHITE_54 : AppColors.BLACK_54_WO,
+              size: 16,
+            ),
           ),
         ),
       ),

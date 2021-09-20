@@ -89,171 +89,180 @@ class _AppStepperState extends State<AppStepper> {
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      cursor: SystemMouseCursors.text,
-      onEnter: (event) {
-        setState(() {
-          hovered = true;
-        });
-      },
-      onExit: (event) {
-        setState(() {
-          hovered = false;
-        });
-      },
-      child: Theme(
-        data: ThemeData(
-            colorScheme: ColorScheme.light(
-          primary: AppColors.BLACK,
-        )),
-        child: TextFormField(
-          textAlign: TextAlign.center,
-          readOnly: true,
-          controller: controller,
-          validator: widget.validator,
-          enabled: !disabled,
-          focusNode: _focusNode,
-          maxLengthEnforcement: MaxLengthEnforcement.enforced,
-          cursorRadius: Radius.circular(AppStepper._cursorRadius),
-          cursorWidth: AppStepper._cursorWidth,
-          cursorHeight: AppStepper._cursorHeight,
-          cursorColor: AppTheme.of(context).accentMain,
-          style: AppTextStyles.styleFrom(
-              context: context,
-              fontSize: widget.fontSize,
-              style: TextStyles.SECONDARY,
-              color: disabled
-                  ? AppColors.TEXT_DISABLED_LIGHT
-                  : AppColors.TEXT_PRIMARY_LIGHT,
-              height: 0),
-          decoration: InputDecoration(
+    return Material(
+      color: AppColors.TRANSPARENT,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.text,
+        onEnter: (event) {
+          setState(() {
+            hovered = true;
+          });
+        },
+        onExit: (event) {
+          setState(() {
+            hovered = false;
+          });
+        },
+        child: Theme(
+          data: ThemeData(
+              colorScheme: ColorScheme.light(
+            primary: AppColors.BLACK,
+          )),
+          child: TextFormField(
+            textAlign: TextAlign.center,
+            readOnly: true,
+            controller: controller,
+            validator: widget.validator,
             enabled: !disabled,
-            isCollapsed: true,
-            filled: false,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 18,
-            ),
-            // isDense: true,
-            helperText: widget.helpText,
-            prefixStyle: TextStyle(height: 1),
-            prefix: Container(
-              // color: Colors.red,
-              // width: 40,
-              // margin: EdgeInsets.only(top: 8),
-              child: ElevatedButton(
-                onPressed: index == 0
-                    ? null
-                    : () {
-                        prev();
-                      },
-                child: Icon(
-                  AppIcons.caret_left_mini,
-                  size: 20,
-                  color: index == 0 || disabled
-                      ? AppColors.BLACK_24_WO
-                      : AppColors.ACCENT_MAIN,
-                ),
-                style: ButtonStyle(
-                  minimumSize: MaterialStateProperty.all(Size(20, 20)),
-                  padding: MaterialStateProperty.all(EdgeInsets.zero),
-                  elevation: MaterialStateProperty.all(0),
-                  backgroundColor: MaterialStateProperty.resolveWith((states) {
-                    if (index == 0) return AppColors.TRANSPARENT;
-                    if (states.contains(MaterialState.hovered))
-                      return AppColors.BLUE_VIOLET_500_16_WO;
-                    return AppColors.TRANSPARENT;
-                  }),
-                  shape: MaterialStateProperty.all(CircleBorder()),
-                ),
+            focusNode: _focusNode,
+            maxLengthEnforcement: MaxLengthEnforcement.enforced,
+            cursorRadius: Radius.circular(AppStepper._cursorRadius),
+            cursorWidth: AppStepper._cursorWidth,
+            cursorHeight: AppStepper._cursorHeight,
+            cursorColor: AppTheme.of(context).accentMain,
+            style: AppTextStyles.styleFrom(
+                context: context,
+                fontSize: widget.fontSize,
+                style: TextStyles.SECONDARY,
+                color: disabled
+                    ? AppColors.TEXT_DISABLED_LIGHT
+                    : AppColors.TEXT_PRIMARY_LIGHT,
+                height: 0),
+            decoration: InputDecoration(
+              enabled: !disabled,
+              isCollapsed: true,
+              filled: false,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 18,
               ),
-            ),
-            suffix: SizedBox(
-              child: ElevatedButton(
-                onPressed: index == widget.children.length - 1
-                    ? null
-                    : () {
-                        next();
-                      },
-                child: Icon(
-                  AppIcons.caret_right_mini,
-                  size: 20,
-                  color: index == widget.children.length - 1 || disabled
-                      ? AppColors.BLACK_24_WO
-                      : AppColors.ACCENT_MAIN,
-                ),
-                style: ButtonStyle(
-                  minimumSize: MaterialStateProperty.all(Size(20, 20)),
-                  padding: MaterialStateProperty.all(EdgeInsets.zero),
-                  elevation: MaterialStateProperty.all(0),
-                  backgroundColor: MaterialStateProperty.resolveWith((states) {
-                    if (index == widget.children.length - 1)
+              // isDense: true,
+              helperText: widget.helpText,
+              prefixStyle: TextStyle(height: 1),
+              prefix: Container(
+                // color: Colors.red,
+                // width: 40,
+                // margin: EdgeInsets.only(top: 8),
+                child: ElevatedButton(
+                  onPressed: index == 0
+                      ? null
+                      : () {
+                          prev();
+                        },
+                  child: Icon(
+                    AppIcons.caret_left_mini,
+                    size: 20,
+                    color: index == 0 || disabled
+                        ? AppColors.BLACK_24_WO
+                        : AppColors.ACCENT_MAIN,
+                  ),
+                  style: ButtonStyle(
+                    minimumSize: MaterialStateProperty.all(Size(20, 20)),
+                    padding: MaterialStateProperty.all(EdgeInsets.zero),
+                    elevation: MaterialStateProperty.all(0),
+                    backgroundColor:
+                        MaterialStateProperty.resolveWith((states) {
+                      if (index == 0) return AppColors.TRANSPARENT;
+                      if (states.contains(MaterialState.hovered))
+                        return AppColors.BLUE_VIOLET_500_16_WO;
                       return AppColors.TRANSPARENT;
-                    if (states.contains(MaterialState.hovered))
-                      return AppColors.BLUE_VIOLET_500_16_WO;
-                    return AppColors.TRANSPARENT;
-                  }),
-                  shape: MaterialStateProperty.all(CircleBorder()),
+                    }),
+                    shape: MaterialStateProperty.all(CircleBorder()),
+                  ),
                 ),
               ),
-            ),
-            counterStyle: AppTextStyles.styleFrom(
-              context: context,
-              style: TextStyles.NOTE,
-              color: AppColors.BLACK_38_WO,
-            ),
-            // counterText: '${widget.controller.text.length}/${widget.maxLength}',
-            border: OutlineInputBorder(
-              borderSide: BorderSide(
-                  color: hovered ? AppColors.BLACK_38_WO : AppColors.BLACK_8_WO,
-                  width: 1.5),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                  color: hovered ? AppColors.BLACK_38_WO : AppColors.BLACK_8_WO,
-                  width: 1.5),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: AppColors.RED_PIGMENT_500, width: 1.5),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.ACCENT_MAIN, width: 1.5),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            disabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: AppColors.BLACK_8_WO, width: 1.5),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderSide:
-                  BorderSide(color: AppColors.RED_PIGMENT_500, width: 1.5),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            labelText: widget.labelText,
-            alignLabelWithHint: true,
-            hintStyle: AppTextStyles.styleFrom(
-              context: context,
-              style: TextStyles.SECONDARY,
-              color: AppColors.BLACK_38_WO,
-            ),
-            helperStyle: AppTextStyles.styleFrom(
-              context: context,
-              style: TextStyles.NOTE,
-              color: AppColors.BLACK_38_WO,
-            ),
-            errorStyle: AppTextStyles.styleFrom(
-              context: context,
-              style: TextStyles.NOTE,
-              color: AppColors.RED_PIGMENT_500,
-            ),
-            labelStyle: AppTextStyles.styleFrom(
-              context: context,
-              style: TextStyles.SECONDARY,
-              color: _isFocused ? AppColors.ACCENT_MAIN : AppColors.BLACK_38_WO,
+              suffix: SizedBox(
+                child: ElevatedButton(
+                  onPressed: index == widget.children.length - 1
+                      ? null
+                      : () {
+                          next();
+                        },
+                  child: Icon(
+                    AppIcons.caret_right_mini,
+                    size: 20,
+                    color: index == widget.children.length - 1 || disabled
+                        ? AppColors.BLACK_24_WO
+                        : AppColors.ACCENT_MAIN,
+                  ),
+                  style: ButtonStyle(
+                    minimumSize: MaterialStateProperty.all(Size(20, 20)),
+                    padding: MaterialStateProperty.all(EdgeInsets.zero),
+                    elevation: MaterialStateProperty.all(0),
+                    backgroundColor:
+                        MaterialStateProperty.resolveWith((states) {
+                      if (index == widget.children.length - 1)
+                        return AppColors.TRANSPARENT;
+                      if (states.contains(MaterialState.hovered))
+                        return AppColors.BLUE_VIOLET_500_16_WO;
+                      return AppColors.TRANSPARENT;
+                    }),
+                    shape: MaterialStateProperty.all(CircleBorder()),
+                  ),
+                ),
+              ),
+              counterStyle: AppTextStyles.styleFrom(
+                context: context,
+                style: TextStyles.NOTE,
+                color: AppColors.BLACK_38_WO,
+              ),
+              // counterText: '${widget.controller.text.length}/${widget.maxLength}',
+              border: OutlineInputBorder(
+                borderSide: BorderSide(
+                    color:
+                        hovered ? AppColors.BLACK_38_WO : AppColors.BLACK_8_WO,
+                    width: 1.5),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(
+                    color:
+                        hovered ? AppColors.BLACK_38_WO : AppColors.BLACK_8_WO,
+                    width: 1.5),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderSide:
+                    BorderSide(color: AppColors.RED_PIGMENT_500, width: 1.5),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderSide:
+                    BorderSide(color: AppColors.ACCENT_MAIN, width: 1.5),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(color: AppColors.BLACK_8_WO, width: 1.5),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderSide:
+                    BorderSide(color: AppColors.RED_PIGMENT_500, width: 1.5),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              labelText: widget.labelText,
+              alignLabelWithHint: true,
+              hintStyle: AppTextStyles.styleFrom(
+                context: context,
+                style: TextStyles.SECONDARY,
+                color: AppColors.BLACK_38_WO,
+              ),
+              helperStyle: AppTextStyles.styleFrom(
+                context: context,
+                style: TextStyles.NOTE,
+                color: AppColors.BLACK_38_WO,
+              ),
+              errorStyle: AppTextStyles.styleFrom(
+                context: context,
+                style: TextStyles.NOTE,
+                color: AppColors.RED_PIGMENT_500,
+              ),
+              labelStyle: AppTextStyles.styleFrom(
+                context: context,
+                style: TextStyles.SECONDARY,
+                color:
+                    _isFocused ? AppColors.ACCENT_MAIN : AppColors.BLACK_38_WO,
+              ),
             ),
           ),
         ),

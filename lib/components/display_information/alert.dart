@@ -1,5 +1,5 @@
 //@dart=2.9
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:tadah_flutter_components/tadah_flutter_components.dart';
 
 /// Displays a widget that will be passed to [child] parameter above the current

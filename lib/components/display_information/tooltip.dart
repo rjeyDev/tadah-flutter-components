@@ -422,7 +422,7 @@ class _TooltipState extends State<AppTooltip>
 
     BoxDecoration defaultDecoration;
     defaultDecoration = BoxDecoration(
-      color: Colors.black,
+      color: AppColors.BLACK,
       borderRadius: const BorderRadius.all(
         Radius.circular(12),
       ),
@@ -549,20 +549,20 @@ class _TooltipOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: IgnorePointer(
-        child: CustomSingleChildLayout(
-          delegate: _TooltipPositionDelegate(
-            target: target,
-            verticalOffset: verticalOffset,
-            preferBelow: preferBelow,
-          ),
-          child: FadeTransition(
-            opacity: animation,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: height),
-              child: DefaultTextStyle(
-                style: Theme.of(context).textTheme.bodyText2,
+    return Material(
+      color: AppColors.TRANSPARENT,
+      child: Positioned.fill(
+        child: IgnorePointer(
+          child: CustomSingleChildLayout(
+            delegate: _TooltipPositionDelegate(
+              target: target,
+              verticalOffset: verticalOffset,
+              preferBelow: preferBelow,
+            ),
+            child: FadeTransition(
+              opacity: animation,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: height),
                 child: Container(
                   decoration: decoration,
                   constraints: BoxConstraints(
