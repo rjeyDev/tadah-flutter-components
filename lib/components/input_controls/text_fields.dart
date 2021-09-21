@@ -128,7 +128,7 @@ class _BasicTextInputState extends State<BasicTextInput> {
                   setState(() {
                     enableClearButton = false;
                   });
-                widget.onChanged(value);
+                if (widget.onChanged != null) widget.onChanged(value);
               },
               onSaved: widget.onSaved,
               validator: widget.validator,
@@ -203,6 +203,9 @@ class _BasicTextInputState extends State<BasicTextInput> {
                         : enableClearButton
                             ? ElevatedButton(
                                 onPressed: () {
+                                  setState(() {
+                                    enableClearButton = false;
+                                  });
                                   widget.controller.clear();
                                 },
                                 child: Icon(

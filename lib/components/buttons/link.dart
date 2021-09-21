@@ -8,7 +8,7 @@ class AppLink extends StatefulWidget {
     this.text, {
     this.onPressed,
     this.fontWeight = FontWeight.w400,
-    this.fontSize,
+    this.fontSize = 16,
   })  : assert(text != null && text != ""),
         assert(fontWeight != null);
 
@@ -43,6 +43,8 @@ class _AppLinkState extends State<AppLink> {
         context: context,
         style: TextStyles.SECONDARY,
         color: color,
+        fontWeight: widget.fontWeight,
+        fontSize: widget.fontSize,
         decoration: (hovered && !pressed)
             ? TextDecoration.underline
             : TextDecoration.none,

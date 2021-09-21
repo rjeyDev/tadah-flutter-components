@@ -19,6 +19,7 @@ class CommonIconButton extends StatefulWidget {
     this.size = CommonButtonSize.Medium,
     this.fontWeight,
     this.fontSize,
+    this.backgroundColor,
     this.wide = false,
     this.padding,
     this.prefixBuilder,
@@ -36,6 +37,7 @@ class CommonIconButton extends StatefulWidget {
   final CommonButtonSize size;
   final FontWeight fontWeight;
   final double fontSize;
+  final Color backgroundColor;
   final bool wide;
   final EdgeInsets padding;
   final CommonButtonElementBuilder prefixBuilder;
@@ -66,7 +68,8 @@ class _CommonIconButtonState extends State<CommonIconButton> {
       default:
         return disabled && !widget.loading
             ? AppTheme.of(context).button.backgroundDisabled
-            : AppTheme.of(context).button.backgroundCommon;
+            : widget.backgroundColor ??
+                AppTheme.of(context).button.backgroundCommon;
     }
   }
 
@@ -126,14 +129,14 @@ class _CommonIconButtonState extends State<CommonIconButton> {
     if (widget.padding != null) return widget.padding;
     switch (widget.size) {
       case CommonButtonSize.Small:
-        return EdgeInsets.all(widget.loading ? 8 : 9);
+        return EdgeInsets.all(8);
         break;
       case CommonButtonSize.Medium:
-        return EdgeInsets.all(widget.loading ? 9 : 11);
+        return EdgeInsets.all(10);
         break;
       case CommonButtonSize.Large:
       default:
-        return EdgeInsets.all(widget.loading ? 11 : 14);
+        return EdgeInsets.all(12);
         break;
     }
   }
@@ -141,14 +144,14 @@ class _CommonIconButtonState extends State<CommonIconButton> {
   double _iconSize() {
     switch (widget.size) {
       case CommonButtonSize.Small:
-        return 11;
+        return 16;
         break;
       case CommonButtonSize.Medium:
-        return 14;
+        return 20;
         break;
       case CommonButtonSize.Large:
       default:
-        return 16;
+        return 24;
     }
   }
 
