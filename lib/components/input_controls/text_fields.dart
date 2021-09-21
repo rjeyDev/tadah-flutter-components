@@ -65,6 +65,7 @@ class _BasicTextInputState extends State<BasicTextInput> {
   FocusNode _focusNode;
 
   bool hide;
+  bool enableClearButton = false;
   bool hovered = false;
   bool get _isFocused => _focusNode.hasFocus;
 
@@ -118,7 +119,17 @@ class _BasicTextInputState extends State<BasicTextInput> {
             height: 70,
             child: TextFormField(
               onTap: widget.onTap,
-              onChanged: widget.onChanged,
+              onChanged: (value) {
+                if (value.length > 0 && !enableClearButton)
+                  setState(() {
+                    enableClearButton = true;
+                  });
+                else if (enableClearButton && value.length == 0)
+                  setState(() {
+                    enableClearButton = false;
+                  });
+                widget.onChanged(value);
+              },
               onSaved: widget.onSaved,
               validator: widget.validator,
               enabled: !widget.disabled,
@@ -189,29 +200,33 @@ class _BasicTextInputState extends State<BasicTextInput> {
                                 ? Icon(AppIcons.eye_slash)
                                 : Icon(AppIcons.eye),
                           )
-                        : ElevatedButton(
-                            onPressed: () {
-                              widget.controller.clear();
-                            },
-                            child: Icon(
-                              AppIcons.x_mini,
-                              size: 20,
-                              color: AppColors.ACCENT_MAIN,
-                            ),
-                            style: ButtonStyle(
-                              minimumSize:
-                                  MaterialStateProperty.all(Size(20, 20)),
-                              fixedSize:
-                                  MaterialStateProperty.all(Size(20, 20)),
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              padding: MaterialStateProperty.all(
-                                  EdgeInsets.only(left: 0)),
-                              elevation: MaterialStateProperty.all(0),
-                              backgroundColor: MaterialStateProperty.all(
-                                  AppColors.BLUE_VIOLET_500_16_WO),
-                              shape: MaterialStateProperty.all(CircleBorder()),
-                            ),
-                          )
+                        : enableClearButton
+                            ? ElevatedButton(
+                                onPressed: () {
+                                  widget.controller.clear();
+                                },
+                                child: Icon(
+                                  AppIcons.x_mini,
+                                  size: 20,
+                                  color: AppColors.ACCENT_MAIN,
+                                ),
+                                style: ButtonStyle(
+                                  minimumSize:
+                                      MaterialStateProperty.all(Size(20, 20)),
+                                  fixedSize:
+                                      MaterialStateProperty.all(Size(20, 20)),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  padding: MaterialStateProperty.all(
+                                      EdgeInsets.only(left: 0)),
+                                  elevation: MaterialStateProperty.all(0),
+                                  backgroundColor: MaterialStateProperty.all(
+                                      AppColors.BLUE_VIOLET_500_16_WO),
+                                  shape:
+                                      MaterialStateProperty.all(CircleBorder()),
+                                ),
+                              )
+                            : null
                     : null,
                 counterStyle: AppTextStyles.styleFrom(
                   context: context,
