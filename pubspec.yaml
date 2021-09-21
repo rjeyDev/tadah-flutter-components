@@ -41,7 +41,7 @@ flutter:
     - family: icons
       fonts:
         - asset: lib/assets/fonts/app_icons.ttf
-    - family: icons
+    - family: Source Sans Pro
       fonts:
         - asset: lib/assets/fonts/source_sans_pro/SourceSansPro-Bold.ttf
           weight: 700
