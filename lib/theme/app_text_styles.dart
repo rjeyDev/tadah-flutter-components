@@ -179,7 +179,7 @@ class AppTextStyles {
 
   static TextStyle styleFrom({
     TextStyles style,
-    Color color,
+    Color color = AppColors.TEXT_PRIMARY_LIGHT,
     @required BuildContext context,
     String fontFamily,
     FontWeight fontWeight,

@@ -6,6 +6,7 @@ import 'package:tadah_flutter_components/tadah_flutter_components.dart';
 class AppLink extends StatefulWidget {
   const AppLink(
     this.text, {
+    this.icon,
     this.onPressed,
     this.fontWeight = FontWeight.w400,
     this.fontSize = 16,
@@ -13,6 +14,7 @@ class AppLink extends StatefulWidget {
         assert(fontWeight != null);
 
   final String text;
+  final IconData icon;
   final VoidCallback onPressed;
   final FontWeight fontWeight;
   final double fontSize;
@@ -37,18 +39,29 @@ class _AppLinkState extends State<AppLink> {
   }
 
   Widget _content(BuildContext context) {
-    return Text(
-      widget.text,
-      style: AppTextStyles.styleFrom(
-        context: context,
-        style: TextStyles.SECONDARY,
-        color: color,
-        fontWeight: widget.fontWeight,
-        fontSize: widget.fontSize,
-        decoration: (hovered && !pressed)
-            ? TextDecoration.underline
-            : TextDecoration.none,
-      ),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          widget.text,
+          style: AppTextStyles.styleFrom(
+            context: context,
+            style: TextStyles.SECONDARY,
+            color: color,
+            fontWeight: widget.fontWeight,
+            fontSize: widget.fontSize,
+            decoration: (hovered && !pressed)
+                ? TextDecoration.underline
+                : TextDecoration.none,
+          ),
+        ),
+        SizedBox(width: 4),
+        Icon(
+          widget.icon,
+          size: 20,
+          color: color,
+        ),
+      ],
     );
   }
 

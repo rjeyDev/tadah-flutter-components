@@ -23,6 +23,12 @@ enum CommonButtonType {
   Contrast,
 }
 
+enum CommonButtonAlignment {
+  left,
+  center,
+  right,
+}
+
 enum CommonButtonSize {
   Small,
   Medium,
@@ -42,6 +48,8 @@ class CommonButton extends StatefulWidget {
     FocusNode focusNode,
     bool autoFocus = false,
     IconData icon,
+    Widget badge,
+    CommonButtonAlignment alignment,
     IconPosition iconPosition = IconPosition.left,
     VoidCallback onPressed,
     bool loading = false,
@@ -58,6 +66,8 @@ class CommonButton extends StatefulWidget {
       onPressed: onPressed,
       type: type,
       size: size,
+      alignment: alignment,
+      badge: badge,
       loading: loading,
       fontWeight: fontWeight,
       fontSize: fontSize,
@@ -70,7 +80,7 @@ class CommonButton extends StatefulWidget {
                   icon,
                   color: color,
                   size: size == CommonButtonSize.Small
-                      ? 12
+                      ? 16
                       : AppWidgetStyles.commonIconSize,
                 ),
               )
@@ -95,6 +105,8 @@ class CommonButton extends StatefulWidget {
     this.text, {
     this.focusNode,
     this.autoFocus = false,
+    this.alignment = CommonButtonAlignment.center,
+    this.badge,
     this.onPressed,
     this.type = CommonButtonType.Primary,
     this.size = CommonButtonSize.Medium,
@@ -112,12 +124,14 @@ class CommonButton extends StatefulWidget {
   final String text;
   final FocusNode focusNode;
   final bool autoFocus;
+  final CommonButtonAlignment alignment;
   final VoidCallback onPressed;
   final CommonButtonType type;
   final CommonButtonSize size;
   final FontWeight fontWeight;
   final double fontSize;
   final bool wide;
+  final Widget badge;
   final EdgeInsets padding;
   final CommonButtonElementBuilder prefixBuilder;
   final CommonButtonElementBuilder suffixBuilder;
@@ -414,36 +428,46 @@ class _CommonButtonState extends State<CommonButton> {
                           new BorderRadius.circular(CommonButton._borderRadius),
                       border: Border.fromBorderSide(_border(context)),
                     ),
-                    child: Center(
-                      child: widget.loading
-                          ? CommonLoader(
+                    child: widget.loading
+                        ? Center(
+                            child: CommonLoader(
                               size: _loaderSize(),
                               inverse: _isLoaderInversed(context),
-                            )
-                          : Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                if (widget.prefixBuilder != null)
-                                  widget.prefixBuilder(
-                                    context,
-                                    widget.type,
-                                    null,
-                                    _color(context),
-                                  ),
-                                Flexible(
-                                  flex: 1,
-                                  child: _content(context),
-                                ),
-                                if (widget.suffixBuilder != null)
-                                  widget.suffixBuilder(
-                                    context,
-                                    widget.type,
-                                    null,
-                                    _color(context),
-                                  ),
-                              ],
                             ),
-                    ),
+                          )
+                        : Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (widget.alignment !=
+                                  CommonButtonAlignment.left)
+                                Expanded(
+                                  child: SizedBox(),
+                                ),
+                              if (widget.prefixBuilder != null)
+                                widget.prefixBuilder(
+                                  context,
+                                  widget.type,
+                                  null,
+                                  _color(context),
+                                ),
+                              _content(context),
+                              if (widget.suffixBuilder != null)
+                                widget.suffixBuilder(
+                                  context,
+                                  widget.type,
+                                  null,
+                                  _color(context),
+                                ),
+                              Expanded(
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: widget.badge != null
+                                      ? widget.badge
+                                      : SizedBox(),
+                                ),
+                              ),
+                            ],
+                          ),
                   ),
                 ),
               ),

@@ -11,7 +11,7 @@ class AppWidgetStyles {
   static const EdgeInsets commonHorizontalPadding =
       const EdgeInsets.symmetric(horizontal: commonHorizontalPaddingValue);
 
-  static const double commonIconSize = 18.0;
+  static const double commonIconSize = 20.0;
 
   static const double commonDialogBorderRadiusValue = 4.0;
   static const Radius commonDialogBorderRadius =
