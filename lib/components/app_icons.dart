@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:tadah_flutter_components/tadah_flutter_components.dart';
 
 class AppIcons {
   AppIcons._();
@@ -175,7 +176,7 @@ class Bullet extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint0Fill = Paint()..style = PaintingStyle.fill;
-    paint0Fill.color = Color(0xff773DF3).withOpacity(1.0);
+    paint0Fill.color = AppColors.BLACK_54_WO;
     canvas.drawCircle(Offset(size.width * 0.5000000, size.height * 0.5000000),
         size.width * 0.1666667, paint0Fill);
   }
