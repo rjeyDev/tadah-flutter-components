@@ -57,12 +57,8 @@ class _CommonIconButtonState extends State<CommonIconButton> {
   Color _backgroundColor(BuildContext context) {
     switch (widget.type) {
       case CommonButtonType.Outlined:
-        return AppTheme.of(context).transparent;
-      // case CommonButtonType.Additional:
-      //   return AppTheme.of(context).button.backgroundCommon;
-      // case CommonButtonType.CommonDanger:
-      //   return AppColors.DANGER_MAIN;
       case CommonButtonType.Contrast:
+      case CommonButtonType.ContrastDark:
         return AppTheme.of(context).transparent;
       case CommonButtonType.Primary:
       default:
@@ -76,6 +72,7 @@ class _CommonIconButtonState extends State<CommonIconButton> {
   bool _isLoaderInversed(BuildContext context) {
     switch (widget.type) {
       case CommonButtonType.Contrast:
+      case CommonButtonType.ContrastDark:
       case CommonButtonType.Outlined:
         return false;
       // case CommonButtonType.Additional:
@@ -119,7 +116,7 @@ class _CommonIconButtonState extends State<CommonIconButton> {
       // case CommonButtonType.Additional:
       //   return AppTheme.of(context).accentMain;
       case CommonButtonType.Primary:
-      // case  CommonButtonType.CommonDanger:
+      case CommonButtonType.ContrastDark:
       default:
         return AppTheme.of(context).button.textOnFilled;
     }
@@ -168,22 +165,29 @@ class _CommonIconButtonState extends State<CommonIconButton> {
     switch (widget.type) {
       case CommonButtonType.Outlined:
       case CommonButtonType.Contrast:
-        return hovered
-            ? AppColors.BLUE_VIOLET_500_8
+        return pressed
+            ? AppColors.BLUE_VIOLET_500_24
             : focused
                 ? AppColors.BLUE_VIOLET_500_16
-                : (pressed)
-                    ? AppColors.BLUE_VIOLET_500_24
+                : hovered
+                    ? AppColors.BLUE_VIOLET_500_8
                     : AppColors.TRANSPARENT;
+        break;
+      case CommonButtonType.ContrastDark:
+        return pressed
+            ? AppColors.WHITE_24
+            : focused || hovered
+                ? AppColors.WHITE_16
+                : AppColors.TRANSPARENT;
         break;
       case CommonButtonType.Primary:
       default:
-        return hovered
-            ? AppColors.BLACK_8
+        return pressed
+            ? AppColors.BLACK_24
             : focused
                 ? AppColors.BLACK_16
-                : pressed
-                    ? AppColors.BLACK_24
+                : hovered
+                    ? AppColors.BLACK_8
                     : AppColors.TRANSPARENT;
     }
   }
@@ -242,7 +246,6 @@ class _CommonIconButtonState extends State<CommonIconButton> {
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,
                 onEnter: (event) {
-                  print('enter');
                   setState(() {
                     hovered = true;
                   });
@@ -254,7 +257,6 @@ class _CommonIconButtonState extends State<CommonIconButton> {
                 //     });
                 // },
                 onExit: (event) {
-                  print('exit');
                   setState(() {
                     hovered = false;
                   });
@@ -263,18 +265,14 @@ class _CommonIconButtonState extends State<CommonIconButton> {
                   onTap: widget.loading ? null : widget.onPressed,
                   onTapDown: (details) {
                     if (!disabled & !widget.loading) {
-                      print('down');
                       setState(() {
-                        hovered = false;
                         pressed = true;
-                        FocusScope.of(context).requestFocus(FocusNode());
                         // pressed = true;
                       });
                     }
                   },
                   onTapUp: (details) {
                     if (!disabled & !widget.loading) {
-                      print('up');
                       setState(() {
                         pressed = false;
                       });
@@ -282,7 +280,6 @@ class _CommonIconButtonState extends State<CommonIconButton> {
                   },
                   onTapCancel: () {
                     if (!disabled && !widget.loading) {
-                      print('cancel');
                       setState(() {
                         pressed = false;
                       });

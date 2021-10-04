@@ -9,7 +9,7 @@ import 'package:tadah_flutter_components/theme/theme/src/theme.dart';
 
 class BasicTextInput extends StatefulWidget {
   static const double _cursorWidth = 1.2;
-  static const double _cursorHeight = AppTextStyles.inputHeightBasicCalc;
+  // static const double _cursorHeight = AppTextStyles.inputHeightBasicCalc;
   static const double _cursorRadius = _cursorWidth / 2;
 
   const BasicTextInput({
@@ -140,18 +140,17 @@ class _BasicTextInputState extends State<BasicTextInput> {
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
               cursorRadius: Radius.circular(BasicTextInput._cursorRadius),
               cursorWidth: BasicTextInput._cursorWidth,
-              cursorHeight: BasicTextInput._cursorHeight,
+              cursorHeight: 16,
               cursorColor: AppTheme.of(context).accentMain,
               obscureText: hide,
               textAlignVertical: TextAlignVertical.center,
               style: AppTextStyles.styleFrom(
-                  context: context,
-                  fontSize: widget.fontSize,
-                  style: TextStyles.SECONDARY,
-                  color: AppColors.TEXT_PRIMARY_LIGHT,
-                  letterSpacing: hide ? 2 : 0
-                  // height: 1.8,
-                  ),
+                context: context,
+                fontSize: widget.fontSize,
+                style: TextStyles.SECONDARY,
+                color: AppColors.TEXT_PRIMARY_LIGHT,
+                letterSpacing: hide ? 2 : 0,
+              ),
               inputFormatters: [
                 LengthLimitingTextInputFormatter(widget.maxLength),
               ],
@@ -185,20 +184,30 @@ class _BasicTextInputState extends State<BasicTextInput> {
                     : null,
                 suffix: widget.enableSuffix
                     ? widget.obscureText
-                        ? IconButton(
-                            padding: EdgeInsets.zero,
-                            iconSize: 20,
-                            splashRadius: 10,
-                            constraints:
-                                BoxConstraints(maxWidth: 20, maxHeight: 20),
+                        ? ElevatedButton(
                             onPressed: () {
                               setState(() {
                                 hide = !hide;
                               });
                             },
-                            icon: hide
-                                ? Icon(AppIcons.eye_slash)
-                                : Icon(AppIcons.eye),
+                            child: Icon(
+                              hide ? AppIcons.eye_slash : AppIcons.eye,
+                              size: 20,
+                              color: AppColors.BLACKOUT_700_80,
+                            ),
+                            style: ButtonStyle(
+                              minimumSize:
+                                  MaterialStateProperty.all(Size(20, 20)),
+                              fixedSize:
+                                  MaterialStateProperty.all(Size(20, 20)),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              padding: MaterialStateProperty.all(
+                                  EdgeInsets.only(left: 0)),
+                              elevation: MaterialStateProperty.all(0),
+                              backgroundColor: MaterialStateProperty.all(
+                                  AppColors.TRANSPARENT),
+                              shape: MaterialStateProperty.all(CircleBorder()),
+                            ),
                           )
                         : enableClearButton
                             ? ElevatedButton(

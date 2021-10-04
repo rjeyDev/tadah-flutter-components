@@ -1,3 +1,4 @@
+//@dart=2.9
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:tadah_flutter_components/tadah_flutter_components.dart';
@@ -6,7 +7,7 @@ class AppIcons {
   AppIcons._();
 
   static const _kFontFam = 'icons';
-  static const String? _kFontPkg = null;
+  static const String _kFontPkg = null;
 
   static const IconData apple =
       IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);

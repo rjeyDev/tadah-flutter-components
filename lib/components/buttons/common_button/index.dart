@@ -17,10 +17,9 @@ typedef CommonButtonElementBuilder = Widget Function(
 
 enum CommonButtonType {
   Primary,
-  // Additional,
-  // CommonDanger,
   Outlined,
   Contrast,
+  ContrastDark,
 }
 
 enum CommonButtonAlignment {
@@ -150,12 +149,8 @@ class _CommonButtonState extends State<CommonButton> {
   Color _backgroundColor(BuildContext context) {
     switch (widget.type) {
       case CommonButtonType.Outlined:
-        return AppTheme.of(context).transparent;
-      // case CommonButtonType.Additional:
-      //   return AppTheme.of(context).button.backgroundCommon;
-      // case CommonButtonType.CommonDanger:
-      //   return AppColors.DANGER_MAIN;
       case CommonButtonType.Contrast:
+      case CommonButtonType.ContrastDark:
         return AppTheme.of(context).transparent;
       case CommonButtonType.Primary:
       default:
@@ -168,6 +163,7 @@ class _CommonButtonState extends State<CommonButton> {
   bool _isLoaderInversed(BuildContext context) {
     switch (widget.type) {
       case CommonButtonType.Contrast:
+      case CommonButtonType.ContrastDark:
       case CommonButtonType.Outlined:
         return false;
       // case CommonButtonType.Additional:
@@ -188,8 +184,6 @@ class _CommonButtonState extends State<CommonButton> {
             ? AppTheme.of(context).button.borderDisabled
             : AppTheme.of(context).accentMain;
         break;
-      case CommonButtonType.Primary:
-      // case CommonButtonType.CommonDanger:
       default:
         borderColor = null;
     }
@@ -208,10 +202,6 @@ class _CommonButtonState extends State<CommonButton> {
         return disabled && !widget.loading
             ? AppTheme.of(context).button.textDisabled
             : AppTheme.of(context).accentMain;
-      // case CommonButtonType.Additional:
-      //   return AppTheme.of(context).accentMain;
-      case CommonButtonType.Primary:
-      // case  CommonButtonType.CommonDanger:
       default:
         return AppTheme.of(context).button.textOnFilled;
     }
@@ -280,6 +270,13 @@ class _CommonButtonState extends State<CommonButton> {
     if (widget.loading || disabled) return AppColors.TRANSPARENT;
     switch (widget.type) {
       case CommonButtonType.Outlined:
+      case CommonButtonType.ContrastDark:
+        return pressed
+            ? AppColors.WHITE_24
+            : focused || hovered
+                ? AppColors.WHITE_16
+                : AppColors.TRANSPARENT;
+        break;
       case CommonButtonType.Contrast:
         return pressed
             ? AppColors.BLUE_VIOLET_500_24
@@ -439,7 +436,8 @@ class _CommonButtonState extends State<CommonButton> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               if (widget.alignment !=
-                                  CommonButtonAlignment.left)
+                                      CommonButtonAlignment.left &&
+                                  widget.wide)
                                 Expanded(
                                   child: SizedBox(),
                                 ),
@@ -458,14 +456,22 @@ class _CommonButtonState extends State<CommonButton> {
                                   null,
                                   _color(context),
                                 ),
-                              Expanded(
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: widget.badge != null
-                                      ? widget.badge
-                                      : SizedBox(),
+                              if (widget.wide &&
+                                  widget.alignment !=
+                                      CommonButtonAlignment.right)
+                                Expanded(
+                                  child: Align(
+                                    alignment: Alignment.centerRight,
+                                    child: widget.badge != null
+                                        ? widget.badge
+                                        : SizedBox(),
+                                  ),
+                                )
+                              else if (widget.badge != null)
+                                Padding(
+                                  padding: EdgeInsets.only(left: 8),
+                                  child: widget.badge,
                                 ),
-                              ),
                             ],
                           ),
                   ),
