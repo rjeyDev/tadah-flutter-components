@@ -40,7 +40,7 @@ class PhoneBox extends StatefulWidget {
   final String helpText;
   final double fontSize;
   final FocusNode focusNode;
-  final ValueChanged<String> onChanged;
+  final Function(CountryCode, String) onChanged;
   final ValueChanged<String> onSaved;
   final String Function(String) validator;
   final bool enableSuffix;
@@ -89,6 +89,7 @@ class _PhoneBoxState extends State<PhoneBox>
                     .firstWhere((element) => element.countryCode == value);
                 textController =
                     MaskedTextController(mask: selectedCountry.mask);
+                widget.onChanged(selectedCountry, textController.text);
               });
             },
           );
@@ -155,7 +156,7 @@ class _PhoneBoxState extends State<PhoneBox>
               primary: AppColors.BLACK,
             )),
             child: TextFormField(
-              onChanged: widget.onChanged,
+              onChanged: (value) => widget.onChanged(selectedCountry, value),
               onSaved: widget.onSaved,
               validator: widget.validator,
               enabled: !disabled,
@@ -181,7 +182,6 @@ class _PhoneBoxState extends State<PhoneBox>
                 filled: false,
                 contentPadding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
                 // isDense: true,
-                helperText: widget.helpText,
                 suffixIconConstraints: BoxConstraints(
                   maxWidth: 20,
                   minWidth: 20,
@@ -191,7 +191,6 @@ class _PhoneBoxState extends State<PhoneBox>
                   minWidth: 40,
                 ),
                 prefixStyle: TextStyle(fontSize: 16),
-                prefixText: selectedCountry.countryCode + ' ',
                 prefixIcon: MouseRegion(
                   cursor: SystemMouseCursors.click,
                   child: GestureDetector(
@@ -292,19 +291,23 @@ class _PhoneBoxState extends State<PhoneBox>
                       BorderSide(color: AppColors.RED_PIGMENT_500, width: 1.5),
                   borderRadius: BorderRadius.circular(8),
                 ),
+                helperText: widget.helpText,
+                prefixText: selectedCountry.countryCode + ' ',
                 hintText: selectedCountry.mask,
                 labelText: widget.labelText,
                 alignLabelWithHint: true,
-                hintStyle: AppTextStyles.styleFrom(
-                  context: context,
-                  style: TextStyles.SECONDARY,
-                  color: AppColors.BLACK_38_WO,
-                ),
+                helperMaxLines: 10,
                 helperStyle: AppTextStyles.styleFrom(
                   context: context,
                   style: TextStyles.NOTE,
                   color: AppColors.BLACK_38_WO,
                 ),
+                hintStyle: AppTextStyles.styleFrom(
+                  context: context,
+                  style: TextStyles.SECONDARY,
+                  color: AppColors.BLACK_38_WO,
+                ),
+
                 errorStyle: AppTextStyles.styleFrom(
                   context: context,
                   style: TextStyles.NOTE,
