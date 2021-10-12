@@ -12,6 +12,8 @@ dependencies:
     sdk: flutter
   
   flutter_dropzone: ^3.0.0
+  dotted_border: ^2.0.0+1
+  video_player: ^2.2.5
 
 dev_dependencies:
   flutter_test:

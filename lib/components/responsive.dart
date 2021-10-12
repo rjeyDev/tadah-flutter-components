@@ -27,7 +27,6 @@ class ResponsiveValue<T> {
   }
 }
 
-// TODO-move to separate package (e.g. tadah_flutter_components)
 class Responsive extends StatelessWidget {
   Responsive({
     Key? key,
