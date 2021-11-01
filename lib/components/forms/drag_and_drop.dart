@@ -74,8 +74,6 @@ class _DragAndDropState extends State<DragAndDrop> {
     if (_isVideo) {
       final blob = html.Blob([bytes]);
       final link = html.Url.createObjectUrlFromBlob(blob);
-      print('link');
-      print(link);
       _videoController = VideoPlayerController.network(link)
         ..initialize().then((value) => setState(() {}));
     }
@@ -95,27 +93,53 @@ class _DragAndDropState extends State<DragAndDrop> {
     return _isDropped
         ? _isVideo
             ? _videoController.value.isInitialized
-                ? Stack(
-                    children: [
-                      AspectRatio(
-                        aspectRatio: _videoController.value.aspectRatio,
-                        child: VideoPlayer(_videoController),
-                      ),
-                      Center(
-                        child: CommonIconButton(
-                          AppIcons.play,
-                          backgroundColor: AppColors.WHITE,
-                          onPressed: () {
-                            _videoController.value.isPlaying
-                                ? _videoController.pause()
-                                : _videoController.play();
-                          },
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Stack(
+                      children: [
+                        AspectRatio(
+                          aspectRatio: _videoController.value.aspectRatio,
+                          child: VideoPlayer(_videoController),
                         ),
-                      ),
-                    ],
+                        Center(
+                          child: CommonIconButton(
+                            AppIcons.play,
+                            backgroundColor: AppColors.WHITE,
+                            onPressed: () {
+                              _videoController.value.isPlaying
+                                  ? _videoController.pause()
+                                  : _videoController.play();
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                   )
                 : SizedBox()
-            : Image.memory(data, fit: BoxFit.cover)
+            : Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: MemoryImage(data),
+                    fit: BoxFit.cover,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    CommonButton.withIcon(
+                      'Change video',
+                      type: CommonButtonType.Primary,
+                      icon: AppIcons.edit_2,
+                      onPressed: () {
+                        setState(() {
+                          _isDropped = false;
+                          data = null;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              )
         : DottedBorder(
             borderType: BorderType.RRect,
             strokeWidth: 2,
